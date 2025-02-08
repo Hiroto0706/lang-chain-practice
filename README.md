@@ -1,1 +1,1 @@
-# Ice Breaker
+LangChainに詳しくなりたい！
