@@ -118,7 +118,7 @@ if __name__ == "__main__":
     chain = summary_prompt_template | llm | StrOutputParser()
 
     information = scrape_linkedin_profile(
-        linkedin_profile_url="https://www.linkedin.com/in/hirotokadota0706/"
+        linkedin_profile_url="https://www.linkedin.com/in/hirotokadota0706/", mock=True
     )
     res = chain.invoke(input={"information": information})
 
