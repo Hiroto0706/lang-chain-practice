@@ -1,12 +1,15 @@
 import os
 from dotenv import load_dotenv
 import requests
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 
 load_dotenv()
 
 
-def scrape_linkedin_profile(linkedin_profile_url: str, mock: bool = False):
+def scrape_linkedin_profile(linkedin_profile_url: str = "https://www.linkedin.com/in/hirotokadota0706/", mock: bool = False):
     """
     scrape information from LinkedIn profiles.
     """
@@ -24,7 +27,13 @@ def scrape_linkedin_profile(linkedin_profile_url: str, mock: bool = False):
         response = requests.get(api_endpoint, params=params, timeout=10)
 
     data = response.json().get("person")
-    data = {k: v for k, v in data.items() if v not in ([], "", "", None)}
+    logger.debug(data)
+
+    data = {
+        k: v
+        for k, v in data.items()
+        if v not in ([], "", "", None) and k not in ["certifications"]
+    }
 
     return data
 
