@@ -10,6 +10,7 @@ from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from agents.twitter_lookup_agent import lookup as twitter_lookup_agent
 from third_parties.twitter import scrape_user_tweets
 from third_parties.linkedin import scrape_linkedin_profile
+from output_parsers import summary_parser
 
 load_dotenv()
 
@@ -20,15 +21,24 @@ def create_chain() -> RunnableSerializable[dict, str]:
     and twitter posts {twitter_posts} I want you to create. (Generate content must be japanese):
     1. a short summary
     2. two interesting facts about them
+    3. recommendation of this person
+
+    User both information from twitter and Linkedin
+    \n{format_instructions}
     """
 
     summary_prompt_template = PromptTemplate(
-        input_variables=["information", "twitter_posts"], template=summary_template
+        input_variables=["information", "twitter_posts"],
+        template=summary_template,
+        partial_variables={
+            "format_instructions": summary_parser.get_format_instructions()
+        },
     )
 
     llm = ChatOpenAI(temperature=1, model_name="gpt-4o-2024-05-13")
 
-    chain = summary_prompt_template | llm | StrOutputParser()
+    # chain = summary_prompt_template | llm | StrOutputParser()
+    chain = summary_prompt_template | llm | summary_parser
 
     return chain
 
@@ -41,8 +51,6 @@ def ice_break_with(name: str) -> str:
 
     twitter_username = twitter_lookup_agent(name=name)
     tweets = scrape_user_tweets(username=twitter_username, mock=True)
-
-    print(linkedin_data)
 
     chain = create_chain()
 

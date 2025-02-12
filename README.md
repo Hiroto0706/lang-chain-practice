@@ -10,3 +10,5 @@ LangChainに詳しくなりたい！
   https://zenn.dev/yuta_enginner/articles/c35768a52c7ba2
   上記のZennの記事がめちゃくちゃわかりやすい。
   Agentは1次下請けでToolsが2次下請け。1次下請けであるAgentが仕事を受注（inputの受け取り）し、2次下請けであるToolsに渡す（仕事の依頼）という流れがめちゃくちゃわかりやすい。
+- OutputParserを使ってLLMの生成する内容をparseする方法を学んだ。
+  `PydanticOutputParser(pydantic_object=Summary)`を使ってパースしたいクラスをpydanticc_objectに渡すことで、LLMに『あ〜、このクラスの形でアウトプット作ってくれい〜』と伝えることができる。
