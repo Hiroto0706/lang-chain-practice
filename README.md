@@ -51,8 +51,99 @@ LangChain の基本的な使い方だけでなく、Twitter や LinkedIn のス�
 
   このように、推論と行動と Tool を使いこなすことで最終的な結論を導き出すのが ReActAgent である。
 
-### ChatGPT による解説
+- callbackとは、特定のイベントの時に呼び出されるハンドラーのこと。JSでいうeventListenerみたいな印象を持った。
+  以下のコードだと、llmの推論がスタートした時と終了した時にログを吐き出す処理が実行される。
+  ```python
+  class AgentCallbackHandler(BaseCallbackHandler):
+    def on_llm_start(
+        self, serialized: Dict[str, Any], prompts: List[str], **kwargs: Any
+    ) -> Any:
+        print(f"***Prompt to LLM was:***\n{prompts[0]}")
+        print("*********")
 
+    def on_llm_end(
+            self, response: LLMResult, **kwargs: Any
+    ) -> Any:
+        print(f"***LLM Response:***\n{response.generations[0][0].text}")
+        print("*********")
+  ```
+  基本的なcallbackの使い方としては、スタート時にはログを吐き出したり初期化に関する処理を実行して、エンド時にはシャットダウン処理を実行したりするのがいいのかなという印象を持った。
+
+  ローカル開発の時にこの機能はめちゃくちゃ便利やなって思った。積極的に使っていこう。
+
+  <details>
+  <summary>実行結果</summary>
+
+  ```
+  ***Prompt to LLM was:***
+  Human:
+      Answer the following questions as best you can. You have access to the following tools:
+
+      get_text_length(text: str) -> int - Returns the length of a text by characters
+
+      Use the following format:
+
+      Question: the input question you must answer
+      Thought: you should always think about what to do
+      Action: the action to take, should be one of [get_text_length]
+      Action Input: the input to the action
+      Observation: the result of the action
+      ... (this Thought/Action/Action Input/Observation can repeat N times)
+      Thought: I now know the final answer
+      Final Answer: the final answer to the original input question
+
+      Begin!
+
+      Question: What is the length in charaters of the text 吉田万段打 ?
+      Thought:
+
+  *********
+  ***LLM Response:***
+  I need to determine the length of the given text in characters.
+      Action: get_text_length
+      Action Input: "吉田万段打"
+  *********
+  tool='get_text_length' tool_input='吉田万段打' log='I need to determine the length of the given text in characters.\n    Action: get_text_length\n    Action Input: "吉田万段打"'
+  get_text_length enter with text='吉田万段打'
+  observation=5
+  ***Prompt to LLM was:***
+  Human:
+      Answer the following questions as best you can. You have access to the following tools:
+
+      get_text_length(text: str) -> int - Returns the length of a text by characters
+
+      Use the following format:
+
+      Question: the input question you must answer
+      Thought: you should always think about what to do
+      Action: the action to take, should be one of [get_text_length]
+      Action Input: the input to the action
+      Observation: the result of the action
+      ... (this Thought/Action/Action Input/Observation can repeat N times)
+      Thought: I now know the final answer
+      Final Answer: the final answer to the original input question
+
+      Begin!
+
+      Question: What is the length in charaters of the text 吉田万段打?
+      Thought: I need to determine the length of the given text in characters.
+      Action: get_text_length
+      Action Input: "吉田万段打"
+  Observation: 5
+  Thought:
+  *********
+  ***LLM Response:***
+  I now know the final answer: 5
+
+  Final Answer: 5 characters
+  *********
+  return_values={'output': '5 characters'} log='I now know the final answer: 5\n\nFinal Answer: 5 characters'
+  {'output': '5 characters'}
+  ```
+
+  </details>
+
+### ChatGPT による解説
 <details>
 <summary>ReAct Agentとは？</summary>
 
@@ -506,4 +597,64 @@ Search: Searches the web for information.
 
 このように、`stop="\nObservation"` を設定することで、エージェントが正しいタイミングで生成を停止し、内部の推論と外部ツールの連携がスムーズに行われるようになります。
 
+</details>
+
+<details>
+<summary>callbacksってなんなんや？</summary>
+
+LangChainにおける**callbacks**とは、エージェントやLLM、チェーンの実行中に特定のイベント（例えば、処理の開始、終了、途中経過など）に応じて自動的に呼び出されるハンドラー（関数やオブジェクト）のことです。これにより、実行の進行状況をログに記録したり、デバッグ情報を表示したり、UIを更新したりするなど、さまざまなサイドエフェクトを実装することができます。
+
+### コード例の解説
+
+```python
+llm = ChatOpenAI(
+    temperature=1,
+    stop=["\n    Observation"],
+    callbacks=[
+        AgentCallbackHandler
+    ]
+)
+```
+
+上記のコードでは、`ChatOpenAI`（大規模言語モデルを扱うクラス）のインスタンスを作成するときに、`callbacks`パラメータに`AgentCallbackHandler`を渡しています。これにより、LLMの呼び出しや応答の各タイミングで`AgentCallbackHandler`内の特定のメソッドが自動的に実行されるようになります。
+
+### 具体例で理解するcallbacks
+
+たとえば、以下のようにカスタムのコールバックハンドラーを定義して、LLMの呼び出し開始時と終了時にメッセージを表示する例を考えてみましょう。
+
+```python
+from langchain.callbacks.base import BaseCallbackHandler
+
+class MyLoggingCallbackHandler(BaseCallbackHandler):
+    def on_llm_start(self, serialized, prompts, **kwargs):
+        print("LLMの呼び出しを開始しました。プロンプト:", prompts)
+
+    def on_llm_end(self, response, **kwargs):
+        print("LLMの応答を受け取りました。応答:", response)
+
+# このカスタムハンドラーをChatOpenAIに渡します。
+llm = ChatOpenAI(
+    temperature=1,
+    stop=["\n    Observation"],
+    callbacks=[MyLoggingCallbackHandler()]
+)
+```
+
+この例では、
+
+- **`on_llm_start` メソッド:**  
+  LLMへの呼び出しが開始されるときに呼ばれ、送信されたプロンプトの内容をログに出力します。
+
+- **`on_llm_end` メソッド:**  
+  LLMから応答を受け取った際に呼ばれ、その応答内容をログに出力します。
+
+### まとめ
+
+- **callbacksの目的:**  
+  実行中の各種イベントにフックし、ログ出力、デバッグ、進捗のモニタリング、UI更新などの追加処理を行うための仕組みです。
+
+- **利用するメリット:**  
+  実際にエージェントやLLMがどのように動作しているのか、内部の処理の流れを可視化できるため、開発やデバッグが容易になります。
+
+このように、LangChainのcallbacksを使うことで、チェーンやエージェントの動作をより細かく制御・監視できるようになります。
 </details>
