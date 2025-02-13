@@ -3,12 +3,12 @@ LangChainに詳しくなりたい！
 # 学んだこと
 
 ## ice_breaker
-- 基本的なLangChainを使った実装
+- 基本的なLangChainを使った実装を学んだ。llmインスタンスの作成、chainの方法、SystemTemplateの定義の仕方などを学んだ。
 - linkedinのURLをスクレイピングし、その値をLangChainを用いてLLMに渡して、人物の要約をしてもらう方法
-- 開発を通してPythonのvenvの使い方を学んだ
-- ToolsとAgentについて
-  https://zenn.dev/yuta_enginner/articles/c35768a52c7ba2
-  上記のZennの記事がめちゃくちゃわかりやすい。
+- 開発を通してPythonのvenvの使い方を学んだ。
+  [こちら](https://monta-database.notion.site/python-langchain-193cca65093280dabe9af4928e4bd3f2)のリンクで手順をまとめた
+- ToolsとAgentについて学んだ。
+  [こちら](https://zenn.dev/yuta_enginner/articles/c35768a52c7ba2)のZennの記事がめちゃくちゃわかりやすい。
   Agentは1次下請けでToolsが2次下請け。1次下請けであるAgentが仕事を受注（inputの受け取り）し、2次下請けであるToolsに渡す（仕事の依頼）という流れがめちゃくちゃわかりやすい。
 - OutputParserを使ってLLMの生成する内容をparseする方法を学んだ。
   `PydanticOutputParser(pydantic_object=Summary)`を使ってパースしたいクラスをpydanticc_objectに渡すことで、LLMに『あ〜、このクラスの形でアウトプット作ってくれい〜』と伝えることができる。
