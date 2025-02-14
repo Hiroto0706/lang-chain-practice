@@ -1,6 +1,7 @@
 LangChain に詳しくなりたい！
 
 Notionで学習管理してます。
+
 https://monta-database.notion.site/AI-Qiita-167cca650932800481a5efff0880eb56
 
 # 学んだこと
