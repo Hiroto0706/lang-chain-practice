@@ -658,3 +658,99 @@ llm = ChatOpenAI(
 
 このように、LangChainのcallbacksを使うことで、チェーンやエージェントの動作をより細かく制御・監視できるようになります。
 </details>
+
+### まとめ
+このセクションではReActAgentがどのようにして動いているのかを理解した。
+ReAcrとは、Reasoning（推論）とAction（行動）を掛け合わせた言葉。
+LLMが与えられたタスクをこなすために、Toolという道具を用いて推論を行い、必要であればToolを使ってActionを行うのがReActであるということを理解した。
+
+個人的に重要だと思ったのがSystem Promptだと思った。そもそもReActはシステムプロンプトで「推論、アクション、アクション、最後に考察してね。必要な関数はToolってのがあるからそれを使ってね。」みたいなのをしているからReActAgentは動くことができるのだと理解した。そのため、システムプロンプトをReActの形にすることが何よりも重要だと感じた。
+
+個人的にすごいなと思ったのが、システムプロンプトの中で以下のようにToolを使ってアクションを起こしてねと書かれてあるのだが、これだけでLLMがよしなにToolを使って行動してくれるのがすごいなと思った。
+```
+the action to take, should be one of [{tool_names}]
+```
+
+ざっくりとReActAgentを動かすためのステップは以下の通り。
+#### 1. toolsの定義
+```python
+tools = [get_text_length]
+```
+このようにLLMがActionの時に使っても良いToolをあらかじめ配列で定義しておく。
+この時、以下のように関数には`@tool`というデコレータをつける必要がある。こうすることで、システム側に「これは関数やなくてツールなんやで」と伝えることができる。
+```python
+@tool
+def get_text_length(text: str) -> int:
+    """
+    Returns the length of a text by characters
+    """
+    print(f"get_text_length enter with {text=}")
+    text = text.strip("'\n").strip('"')
+
+    return len(text)
+```
+
+#### 2. templateの定義
+個人的にReActの核だなと思ったのがこのシステムテンプレート。システムテンプレートで推論→アクション（Toolを使う）ように定義しないと、LLMは動いてくれないと思うので、この定義がめちゃくちゃ重要。
+```python
+template = """
+Answer the following questions as best you can. You have access to the following tools:
+
+{tools}
+
+Use the following format:
+
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [{tool_names}]
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+
+Begin!
+
+Question: {input}
+Thought: {agent_scratchpad}
+"""
+
+prompt = PromptTemplate.from_template(template=template).partial(
+    tools=render_text_description(tools),
+    tool_names=", ".join([t.name for t in tools]),
+)
+```
+上記のプロンプトのインスタンス？を作成している箇所の`partial()`とはシステムプロンプトの変数と引数をマッピングするみたいな役割がある。
+`render_text_description()`を使うことで、toolsの関数名とその説明（Doc）をテンプレートに渡すことができる。（便利）
+
+#### 3. LLMインスタンスの作成
+これは特に話すことない。LLM開発には必須のやつ。強いていうなら、stop引数でLLMに対して「stop引数の内容を生成したらその時点で生成は終了や！」ということを伝えることができる。（へぇ〜）
+```python
+llm = ChatOpenAI(
+    temperature=1,
+    stop=["\n    Observation"],
+    callbacks=[
+        AgentCallbackHandler()
+    ]
+)
+```
+callbacksはめちゃくちゃ便利なやつで、例えばLLMが生成を開始する前や後に実行する関数とかを定義することができる。ログをリッチにしていつLLMの生成が始まって終わったのかをわかりやすくするとかに使えそうな印象。
+
+#### 4. Agentの作成
+以下のようにパイプラインで繋げることでAgentを作ることができる。`ReActAgentSingleInputOutputParser()`を使うことでLLMの生成結果をパースして見やすくすることができるよ。
+```python
+agent = {
+    "input": lambda x: x["input"],
+    "agent_scratchpad": lambda x: format_log_to_str(x["agent_scratchpad"])
+} | prompt | llm | ReActSingleInputOutputParser()
+```
+あとは以下のように`invoke`したらOK
+
+```python
+agent_step: Union[AgentAction, AgentFinish] = agent.invoke(
+    {
+        "input": "What is the length in charaters of the text 吉田万段打 ?",
+        "agent_scratchpad": intermediate_steps
+    }
+)
+```
