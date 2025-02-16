@@ -18,9 +18,9 @@ if __name__ == "__main__":
 
     query = "what is pinecone in machine learning?"
     chain = PromptTemplate.from_template(template=query) | llm
-    result = chain.invoke(input={})
+    # result = chain.invoke(input={})
 
-    print(result.content)
+    # print(result.content)
 
     vectorstore = PineconeVectorStore(
         index_name=os.getenv("INDEX_NAME"), embedding=embeddings

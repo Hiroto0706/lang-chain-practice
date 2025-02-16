@@ -1,6 +1,6 @@
 LangChain に詳しくなりたい！
 
-Notionで学習管理してます。
+Notion で学習管理してます。
 
 https://monta-database.notion.site/AI-Qiita-167cca650932800481a5efff0880eb56
 
@@ -55,8 +55,9 @@ LangChain の基本的な使い方だけでなく、Twitter や LinkedIn のス�
 
   このように、推論と行動と Tool を使いこなすことで最終的な結論を導き出すのが ReActAgent である。
 
-- callbackとは、特定のイベントの時に呼び出されるハンドラーのこと。JSでいうeventListenerみたいな印象を持った。
-  以下のコードだと、llmの推論がスタートした時と終了した時にログを吐き出す処理が実行される。
+- callback とは、特定のイベントの時に呼び出されるハンドラーのこと。JS でいう eventListener みたいな印象を持った。
+  以下のコードだと、llm の推論がスタートした時と終了した時にログを吐き出す処理が実行される。
+
   ```python
   class AgentCallbackHandler(BaseCallbackHandler):
     def on_llm_start(
@@ -71,7 +72,8 @@ LangChain の基本的な使い方だけでなく、Twitter や LinkedIn のス�
         print(f"***LLM Response:***\n{response.generations[0][0].text}")
         print("*********")
   ```
-  基本的なcallbackの使い方としては、スタート時にはログを吐き出したり初期化に関する処理を実行して、エンド時にはシャットダウン処理を実行したりするのがいいのかなという印象を持った。
+
+  基本的な callback の使い方としては、スタート時にはログを吐き出したり初期化に関する処理を実行して、エンド時にはシャットダウン処理を実行したりするのがいいのかなという印象を持った。
 
   ローカル開発の時にこの機能はめちゃくちゃ便利やなって思った。積極的に使っていこう。
 
@@ -148,6 +150,7 @@ LangChain の基本的な使い方だけでなく、Twitter や LinkedIn のス�
   </details>
 
 ### ChatGPT による解説
+
 <details>
 <summary>ReAct Agentとは？</summary>
 
@@ -606,7 +609,7 @@ Search: Searches the web for information.
 <details>
 <summary>callbacksってなんなんや？</summary>
 
-LangChainにおける**callbacks**とは、エージェントやLLM、チェーンの実行中に特定のイベント（例えば、処理の開始、終了、途中経過など）に応じて自動的に呼び出されるハンドラー（関数やオブジェクト）のことです。これにより、実行の進行状況をログに記録したり、デバッグ情報を表示したり、UIを更新したりするなど、さまざまなサイドエフェクトを実装することができます。
+LangChain における**callbacks**とは、エージェントや LLM、チェーンの実行中に特定のイベント（例えば、処理の開始、終了、途中経過など）に応じて自動的に呼び出されるハンドラー（関数やオブジェクト）のことです。これにより、実行の進行状況をログに記録したり、デバッグ情報を表示したり、UI を更新したりするなど、さまざまなサイドエフェクトを実装することができます。
 
 ### コード例の解説
 
@@ -620,11 +623,11 @@ llm = ChatOpenAI(
 )
 ```
 
-上記のコードでは、`ChatOpenAI`（大規模言語モデルを扱うクラス）のインスタンスを作成するときに、`callbacks`パラメータに`AgentCallbackHandler`を渡しています。これにより、LLMの呼び出しや応答の各タイミングで`AgentCallbackHandler`内の特定のメソッドが自動的に実行されるようになります。
+上記のコードでは、`ChatOpenAI`（大規模言語モデルを扱うクラス）のインスタンスを作成するときに、`callbacks`パラメータに`AgentCallbackHandler`を渡しています。これにより、LLM の呼び出しや応答の各タイミングで`AgentCallbackHandler`内の特定のメソッドが自動的に実行されるようになります。
 
-### 具体例で理解するcallbacks
+### 具体例で理解する callbacks
 
-たとえば、以下のようにカスタムのコールバックハンドラーを定義して、LLMの呼び出し開始時と終了時にメッセージを表示する例を考えてみましょう。
+たとえば、以下のようにカスタムのコールバックハンドラーを定義して、LLM の呼び出し開始時と終了時にメッセージを表示する例を考えてみましょう。
 
 ```python
 from langchain.callbacks.base import BaseCallbackHandler
@@ -647,41 +650,48 @@ llm = ChatOpenAI(
 この例では、
 
 - **`on_llm_start` メソッド:**  
-  LLMへの呼び出しが開始されるときに呼ばれ、送信されたプロンプトの内容をログに出力します。
+  LLM への呼び出しが開始されるときに呼ばれ、送信されたプロンプトの内容をログに出力します。
 
 - **`on_llm_end` メソッド:**  
-  LLMから応答を受け取った際に呼ばれ、その応答内容をログに出力します。
+  LLM から応答を受け取った際に呼ばれ、その応答内容をログに出力します。
 
 ### まとめ
 
-- **callbacksの目的:**  
-  実行中の各種イベントにフックし、ログ出力、デバッグ、進捗のモニタリング、UI更新などの追加処理を行うための仕組みです。
+- **callbacks の目的:**  
+  実行中の各種イベントにフックし、ログ出力、デバッグ、進捗のモニタリング、UI 更新などの追加処理を行うための仕組みです。
 
 - **利用するメリット:**  
-  実際にエージェントやLLMがどのように動作しているのか、内部の処理の流れを可視化できるため、開発やデバッグが容易になります。
+  実際にエージェントや LLM がどのように動作しているのか、内部の処理の流れを可視化できるため、開発やデバッグが容易になります。
 
-このように、LangChainのcallbacksを使うことで、チェーンやエージェントの動作をより細かく制御・監視できるようになります。
+このように、LangChain の callbacks を使うことで、チェーンやエージェントの動作をより細かく制御・監視できるようになります。
+
 </details>
 
 ### まとめ
-このセクションではReActAgentがどのようにして動いているのかを理解した。
-ReAcrとは、Reasoning（推論）とAction（行動）を掛け合わせた言葉。
-LLMが与えられたタスクをこなすために、Toolという道具を用いて推論を行い、必要であればToolを使ってActionを行うのがReActであるということを理解した。
 
-個人的に重要だと思ったのがSystem Promptだと思った。そもそもReActはシステムプロンプトで「推論、アクション、アクション、最後に考察してね。必要な関数はToolってのがあるからそれを使ってね。」みたいなのをしているからReActAgentは動くことができるのだと理解した。そのため、システムプロンプトをReActの形にすることが何よりも重要だと感じた。
+このセクションでは ReActAgent がどのようにして動いているのかを理解した。
+ReAcr とは、Reasoning（推論）と Action（行動）を掛け合わせた言葉。
+LLM が与えられたタスクをこなすために、Tool という道具を用いて推論を行い、必要であれば Tool を使って Action を行うのが ReAct であるということを理解した。
 
-個人的にすごいなと思ったのが、システムプロンプトの中で以下のようにToolを使ってアクションを起こしてねと書かれてあるのだが、これだけでLLMがよしなにToolを使って行動してくれるのがすごいなと思った。
+個人的に重要だと思ったのが System Prompt だと思った。そもそも ReAct はシステムプロンプトで「推論、アクション、アクション、最後に考察してね。必要な関数は Tool ってのがあるからそれを使ってね。」みたいなのをしているから ReActAgent は動くことができるのだと理解した。そのため、システムプロンプトを ReAct の形にすることが何よりも重要だと感じた。
+
+個人的にすごいなと思ったのが、システムプロンプトの中で以下のように Tool を使ってアクションを起こしてねと書かれてあるのだが、これだけで LLM がよしなに Tool を使って行動してくれるのがすごいなと思った。
+
 ```
 the action to take, should be one of [{tool_names}]
 ```
 
-ざっくりとReActAgentを動かすためのステップは以下の通り。
-#### 1. toolsの定義
+ざっくりと ReActAgent を動かすためのステップは以下の通り。
+
+#### 1. tools の定義
+
 ```python
 tools = [get_text_length]
 ```
-このようにLLMがActionの時に使っても良いToolをあらかじめ配列で定義しておく。
+
+このように LLM が Action の時に使っても良い Tool をあらかじめ配列で定義しておく。
 この時、以下のように関数には`@tool`というデコレータをつける必要がある。こうすることで、システム側に「これは関数やなくてツールなんやで」と伝えることができる。
+
 ```python
 @tool
 def get_text_length(text: str) -> int:
@@ -694,8 +704,10 @@ def get_text_length(text: str) -> int:
     return len(text)
 ```
 
-#### 2. templateの定義
-個人的にReActの核だなと思ったのがこのシステムテンプレート。システムテンプレートで推論→アクション（Toolを使う）ように定義しないと、LLMは動いてくれないと思うので、この定義がめちゃくちゃ重要。
+#### 2. template の定義
+
+個人的に ReAct の核だなと思ったのがこのシステムテンプレート。システムテンプレートで推論 → アクション（Tool を使う）ように定義しないと、LLM は動いてくれないと思うので、この定義がめちゃくちゃ重要。
+
 ```python
 template = """
 Answer the following questions as best you can. You have access to the following tools:
@@ -724,11 +736,14 @@ prompt = PromptTemplate.from_template(template=template).partial(
     tool_names=", ".join([t.name for t in tools]),
 )
 ```
-上記のプロンプトのインスタンス？を作成している箇所の`partial()`とはシステムプロンプトの変数と引数をマッピングするみたいな役割がある。
-`render_text_description()`を使うことで、toolsの関数名とその説明（Doc）をテンプレートに渡すことができる。（便利）
 
-#### 3. LLMインスタンスの作成
-これは特に話すことない。LLM開発には必須のやつ。強いていうなら、stop引数でLLMに対して「stop引数の内容を生成したらその時点で生成は終了や！」ということを伝えることができる。（へぇ〜）
+上記のプロンプトのインスタンス？を作成している箇所の`partial()`とはシステムプロンプトの変数と引数をマッピングするみたいな役割がある。
+`render_text_description()`を使うことで、tools の関数名とその説明（Doc）をテンプレートに渡すことができる。（便利）
+
+#### 3. LLM インスタンスの作成
+
+これは特に話すことない。LLM 開発には必須のやつ。強いていうなら、stop 引数で LLM に対して「stop 引数の内容を生成したらその時点で生成は終了や！」ということを伝えることができる。（へぇ〜）
+
 ```python
 llm = ChatOpenAI(
     temperature=1,
@@ -738,17 +753,21 @@ llm = ChatOpenAI(
     ]
 )
 ```
-callbacksはめちゃくちゃ便利なやつで、例えばLLMが生成を開始する前や後に実行する関数とかを定義することができる。ログをリッチにしていつLLMの生成が始まって終わったのかをわかりやすくするとかに使えそうな印象。
 
-#### 4. Agentの作成
-以下のようにパイプラインで繋げることでAgentを作ることができる。`ReActAgentSingleInputOutputParser()`を使うことでLLMの生成結果をパースして見やすくすることができるよ。
+callbacks はめちゃくちゃ便利なやつで、例えば LLM が生成を開始する前や後に実行する関数とかを定義することができる。ログをリッチにしていつ LLM の生成が始まって終わったのかをわかりやすくするとかに使えそうな印象。
+
+#### 4. Agent の作成
+
+以下のようにパイプラインで繋げることで Agent を作ることができる。`ReActAgentSingleInputOutputParser()`を使うことで LLM の生成結果をパースして見やすくすることができるよ。
+
 ```python
 agent = {
     "input": lambda x: x["input"],
     "agent_scratchpad": lambda x: format_log_to_str(x["agent_scratchpad"])
 } | prompt | llm | ReActSingleInputOutputParser()
 ```
-あとは以下のように`invoke`したらOK
+
+あとは以下のように`invoke`したら OK
 
 ```python
 agent_step: Union[AgentAction, AgentFinish] = agent.invoke(
@@ -758,62 +777,476 @@ agent_step: Union[AgentAction, AgentFinish] = agent.invoke(
     }
 )
 ```
+
 ## intro-to-vector-dbs
-- ここではベクトルDBにデータをぶち込んで、それをRAGで取得するという方法を学んだ。
+
+- ここではベクトル DB にデータをぶち込んで、それを RAG で取得するという方法を学んだ。
 - ベクトルデータにデータをぶち込むには以下のステップが必要。
+
 1. **元のテキストをチャンク化する（細かく分ける）**
 
-    人間も一度にテキストを理解するのではなく、細かい単位に分けて理解するように、機械も同じように理解する必要がある。そのためこのチャンク化は必要なステップとなる。
+   人間も一度にテキストを理解するのではなく、細かい単位に分けて理解するように、機械も同じように理解する必要がある。そのためこのチャンク化は必要なステップとなる。
 
 2. **チャンク化したテキストを埋め込みする**
 
-    埋め込みとは機械が理解しやすい形に加工することである。加工後のデータはベクトルデータとなっている。
+   埋め込みとは機械が理解しやすい形に加工することである。加工後のデータはベクトルデータとなっている。
 
 3. **ベクトル化したデータと元のテキストをベクトルデータベースのクライアントに渡す**
 
-    あとはベクトルデータに書き込む関数(`PineconeVectorStore.from_documents()`)を使って書き込み先のベクトルDB（index_name）にtexts（元のテキストをチャンクしたもの）とembeddings（textsをベクトル化したもの）を渡せば書き込みが行われる
+   あとはベクトルデータに書き込む関数(`PineconeVectorStore.from_documents()`)を使って書き込み先のベクトル DB（index_name）に texts（元のテキストをチャンクしたもの）と embeddings（texts をベクトル化したもの）を渡せば書き込みが行われる
 
 - 以下のコードの解説
+
   ```python
   PineconeVectorStore.from_documents(
       texts, embeddings, index_name=os.getenv("INDEX_NAME")
   )
   ```
-  このコードはベクトルデータベースにチャンク化したテキストとベクトル化したデータをindex_nameつまり対象のベクトルデータベースにぶち込むためのクライアントを作成している。
-  ベクトルデータは機械が理解しやすいように変換しているので、元のテキストいらなくね？って思うかもしれないがそれは間違いで、ベクトルデータと一緒に元のデータも渡すことで検索結果の参照として元のデータを渡すことができるのだ。メタデータ的な立ち位置としてtextsも渡しているという理解でOK
 
-### ChatGPTによる解説
+  このコードはベクトルデータベースにチャンク化したテキストとベクトル化したデータを index_name つまり対象のベクトルデータベースにぶち込むためのクライアントを作成している。
+  ベクトルデータは機械が理解しやすいように変換しているので、元のテキストいらなくね？って思うかもしれないがそれは間違いで、ベクトルデータと一緒に元のデータも渡すことで検索結果の参照として元のデータを渡すことができるのだ。メタデータ的な立ち位置として texts も渡しているという理解で OK
 
-  <details>
-  <summary>Embeddingとは？</summary>
+- ベクトル DB からデータを取得する方法は以下の通り。
 
-  Embeddings（埋め込み）とは、テキスト（単語、文、段落など）を、機械学習モデルが理解しやすい数値のベクトル（例えば、固定長の数値の配列）に変換したものです。これにより、コンピュータはテキストの意味や文脈を数学的に扱えるようになります。
+1. embeddings モデルと llm インスタンスの作成
 
-  ### 具体例で説明
+```python
+embeddings = OpenAIEmbeddings()
+llm = ChatOpenAI()
+```
 
-  #### 例1: 単語の埋め込み
-  例えば、「猫」と「犬」という単語があるとします。人間はどちらも動物であり、可愛らしいイメージがあるという共通点を直感的に理解できます。しかし、コンピュータは文字列のままではこの類似性を理解できません。
+2. プロンプトチェーンの作成
 
-  そこで、Word2VecやGloVeのようなモデルを使って、各単語を300次元の数値ベクトルに変換します。すると、
+```python
+query = "what is pinecone in machine learning?"
+chain = PromptTemplate.from_template(template=query) | llm
+```
 
-  - 「猫」 → `[0.25, -0.13, 0.78, ..., 0.05]`  
-  - 「犬」 → `[0.27, -0.11, 0.75, ..., 0.07]`
+3. Pinecone オブジェクトの作成
 
-  というようなベクトルになります。これらのベクトルは「猫」と「犬」が似た意味を持つため、空間上でも近い位置に配置されます。一方、例えば「車」のベクトルは全く異なる方向になるでしょう。
+```python
+vectorstore = PineconeVectorStore(
+    index_name=os.getenv("INDEX_NAME"), embedding=embeddings
+)
+```
 
-  #### 例2: 文の埋め込み
-  文章全体の意味を表現するために、BERTやGPTなどのモデルを使って、文章全体をベクトル化することもできます。たとえば、
+index_name が対象のベクトル DB の名前、そして、その DB からベクトルデータを取得するために embedding モデルを引数に渡す。
 
-  - 「私は毎朝コーヒーを飲みます。」  
-  - 「毎朝、コーヒーを飲むのが私の日課です。」
+ベクトル DB における検索ではこの embeddings モデルを使って検索を行う。
 
-  これら2つの文は、意味的に非常に似ています。埋め込みベクトルに変換すると、空間上で互いに近い位置にマッピングされるため、「似た内容の文章はベクトル空間上で近い距離にある」という性質が生まれます。
+4. retrieval QA chain のプロンプトを hub より取得
 
-  ### Embeddingsの活用例
+```python
+retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+```
 
-    - **類似性検索**: 複数の文書や単語のベクトル間の距離を計算し、意味的に似たものを検索できます。
-  - **クラスタリング**: 似た内容の文書をグループ化するために使用できます。
-  - **自然言語処理（NLP）タスク全般**: 翻訳、要約、感情分析など、多くのNLPタスクで基盤となる技術です。
+hub より`langchain-ai/retrieval-qa-chat`というプロンプトテンプレートを取得する。
+これは複数のドキュメントから情報をまとめて質問に答えることに適したプロンプトとなっている。
 
-  まとめると、Embeddingsは「テキストの意味や文脈を数値として表現する技術」であり、これにより機械は人間の言語を数学的に処理できるようになります。
-  </details>
+ちなみに中身はこんな感じ。シンプル。
+
+```
+Answer any use questions based solely on the context below:
+
+<context>
+{context}
+</context>
+```
+
+5. ドキュメント統合チェーンの作成
+
+```python
+combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
+```
+
+「Document オブジェクトのリスト」を一つのプロンプトにまとめて LLM に渡すチェーン。
+
+例えば以下のような例があるとする。
+
+```python
+docs = [
+  "もんたは犬が好きですが、猫は普通です",
+  "もんたは赤色と青色と黒色が好きです"
+]
+```
+
+これらのドキュメントを 1 つにまとめてコンテキストに渡すみたいなことがこの関数を使うことでできるようになる。
+
+6. リトリーバルチェーンの作成
+
+```python
+retrieval_chain = create_retrieval_chain(
+    retriever=vectorstore.as_retriever(), combine_docs_chain=combine_docs_chain
+)
+```
+
+これはユーザーからの質問に対して、Pinecone ベクトル DB から関連するドキュメントを検索（リトリーバル）し、その後 combine_docs_chain で複数のドキュメントを統合し、最終的な回答を生成する一連の流れを構築するための処理である。
+
+まとめるとざっくりと以下のような流れで処理が行われている。
+①embeddings モデルはベクトル DB の検索を行うためのモデル →② ベクトル DB のオブジェクトを作成するには index_name と埋め込みモデルが必要 →③ リトリーバルのためのシステムプロンプトを設定する →④`create_stuff_documents_chain()`はドキュメントのリストを 1 つのプロンプトに渡すために必要なチェーン →⑤`create_retrieval_chain()`でベクトル DB の検索（リトリーブ）とドキュメントリスト統合のチェーンを引数に渡し、ベクトル DB のリトリーブのチェーンが完成する →⑥ 最後に`invoke()`し、引数に query を渡せばベクトル DB に埋め込みモデルが検索を行ってくれて、取得したドキュメントリストをコンテキストに渡して回答を答えてくれる。
+
+これがざっくりとした流れとなる。
+
+<details>
+<summary>添削</summary>
+はい、概ねその通りの流れになっています。以下にそれぞれのステップを再確認します。
+
+1. **Embeddings モデルの利用**
+
+   - **①**: `embeddings`モデルは、クエリや文書を数値のベクトルに変換する役割を担い、これを元にベクトル DB での検索が行われます。
+
+2. **Pinecone ベクトル DB の設定**
+
+   - **②**: `PineconeVectorStore`を作成する際、`index_name`（対象のインデックス名）と`embeddings`モデルが必要です。これにより、どのデータベースから情報を取得するか、そしてテキストをどのようにベクトル化するかが決まります。
+
+3. **リトリーバル用システムプロンプトの設定**
+
+   - **③**: `retrieval_qa_chat_prompt`を通して、どのようにドキュメントを統合して回答を生成するかのプロンプト（テンプレート）が設定されます。
+
+4. **ドキュメント統合チェーンの作成**
+
+   - **④**: `create_stuff_documents_chain()`は、例えば
+     ```python
+     docs = [
+       "もんたは犬が好きですが、猫は普通です",
+       "もんたは赤色と青色と黒色が好きです"
+     ]
+     ```
+     のような複数のドキュメントを、一つのプロンプトにまとめ、LLM に渡して回答生成を行うためのチェーンを構築します。
+
+5. **リトリーバルチェーンの完成**
+
+   - **⑤**: `create_retrieval_chain()`により、Pinecone ベクトル DB からのドキュメント検索（リトリーバル）と、統合チェーン（combine_docs_chain）を組み合わせたシステムが完成します。これにより、検索した結果のドキュメントリストを統合して LLM へ渡す処理が一連となります。
+
+6. **クエリの実行と回答生成**
+   - **⑥**: 最後に、`invoke()`メソッドを呼び出し、ユーザーの質問（query）を入力すると、
+     - Embeddings モデルでクエリがベクトルに変換され、
+     - Pinecone ベクトル DB から類似のドキュメントが検索され、
+     - 取得したドキュメントリストが統合チェーンに渡され、
+     - 統合された情報を元に LLM が最終的な回答を生成します。
+
+この流れにより、ユーザーからの質問に対して、関連情報を効率よく検索し、適切な回答を返すシステムが構築されている、という理解で正しいです。
+
+</details>
+
+個人的に面白いなと思ったのは、プロンプトテンプレートのコンテキストにドキュメントリストをよしなに加工して渡してくれる`create_stuff_documents_chain()`。これがあるから膨大なドキュメントのリストもコンテキストに含めることができる。
+そして、<font color="red">**これを`create_retrieval_chain()`の引数に渡すだけでよしなにドキュメントを取得し、結合しコンテキストに渡してくれるのがすごい便利**</font>だなと思った。
+
+### ChatGPT による解説
+
+<details>
+<summary>Embeddingとは？</summary>
+
+Embeddings（埋め込み）とは、テキスト（単語、文、段落など）を、機械学習モデルが理解しやすい数値のベクトル（例えば、固定長の数値の配列）に変換したものです。これにより、コンピュータはテキストの意味や文脈を数学的に扱えるようになります。
+
+### 具体例で説明
+
+#### 例 1: 単語の埋め込み
+
+例えば、「猫」と「犬」という単語があるとします。人間はどちらも動物であり、可愛らしいイメージがあるという共通点を直感的に理解できます。しかし、コンピュータは文字列のままではこの類似性を理解できません。
+
+そこで、Word2Vec や GloVe のようなモデルを使って、各単語を 300 次元の数値ベクトルに変換します。すると、
+
+- 「猫」 → `[0.25, -0.13, 0.78, ..., 0.05]`
+- 「犬」 → `[0.27, -0.11, 0.75, ..., 0.07]`
+
+というようなベクトルになります。これらのベクトルは「猫」と「犬」が似た意味を持つため、空間上でも近い位置に配置されます。一方、例えば「車」のベクトルは全く異なる方向になるでしょう。
+
+#### 例 2: 文の埋め込み
+
+文章全体の意味を表現するために、BERT や GPT などのモデルを使って、文章全体をベクトル化することもできます。たとえば、
+
+- 「私は毎朝コーヒーを飲みます。」
+- 「毎朝、コーヒーを飲むのが私の日課です。」
+
+これら 2 つの文は、意味的に非常に似ています。埋め込みベクトルに変換すると、空間上で互いに近い位置にマッピングされるため、「似た内容の文章はベクトル空間上で近い距離にある」という性質が生まれます。
+
+### Embeddings の活用例
+
+- **類似性検索**: 複数の文書や単語のベクトル間の距離を計算し、意味的に似たものを検索できます。
+- **クラスタリング**: 似た内容の文書をグループ化するために使用できます。
+- **自然言語処理（NLP）タスク全般**: 翻訳、要約、感情分析など、多くの NLP タスクで基盤となる技術です。
+
+まとめると、Embeddings は「テキストの意味や文脈を数値として表現する技術」であり、これにより機械は人間の言語を数学的に処理できるようになります。
+
+</details>
+
+<details>
+<summary>ベクトルDBからコンテキストを取得するステップ</summary>
+以下はコード全体の流れと各部分の役割についての詳細な解説です。
+
+---
+
+### 1. ライブラリのインポートと環境変数の読み込み
+
+```python
+import os
+from dotenv import load_dotenv
+from langchain_core.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_pinecone import PineconeVectorStore
+
+from langchain import hub
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains.retrieval import create_retrieval_chain
+
+load_dotenv()
+```
+
+- **`import os`**  
+  OS に関する操作（例: 環境変数の取得）を行うための標準ライブラリです。
+
+- **`from dotenv import load_dotenv`**  
+  `.env`ファイルから環境変数を読み込むためのライブラリです。  
+  `load_dotenv()` を呼び出すことで、同ディレクトリ内の `.env` に記述された変数が読み込まれ、 `os.getenv()` でアクセスできるようになります。
+
+- **LangChain 関連のインポート**
+  - `PromptTemplate`: LLM へ渡すためのプロンプト（問い）を定義するクラスです。
+  - `ChatOpenAI`: OpenAI のチャット形式の言語モデルを利用するためのクラス。
+  - `OpenAIEmbeddings`: テキストをベクトル（数値表現）に変換するためのクラス。
+  - `PineconeVectorStore`: Pinecone（ベクトルデータベース）を利用するためのクラス。
+  - `hub`: LangChain が提供する「ハブ」から既存のプロンプトやチェーンを取得するためのモジュール。
+  - `create_stuff_documents_chain`: 複数のドキュメント（情報）を統合し、LLM で回答を生成するチェーンを作成する関数。
+  - `create_retrieval_chain`: 検索（リトリーバル）と回答生成を組み合わせたチェーンを作成する関数。
+
+---
+
+### 2. メイン処理の開始
+
+```python
+if __name__ == "__main__":
+    print("Retrieving...")
+```
+
+- **`if __name__ == "__main__":`**  
+  このスクリプトが直接実行された場合に以下の処理を実行するための条件分岐です。
+
+- **`print("Retrieving...")`**  
+  プログラムが実行された際に、「Retrieving...」というメッセージを出力し、処理開始を知らせます。
+
+---
+
+### 3. 埋め込みモデルと LLM の初期化
+
+```python
+    embeddings = OpenAIEmbeddings()
+    llm = ChatOpenAI()
+```
+
+- **`embeddings = OpenAIEmbeddings()`**  
+  テキストを数値のベクトルに変換するモデルを初期化します。  
+  このベクトル表現は後で Pinecone での類似度検索に使用されます。
+
+- **`llm = ChatOpenAI()`**  
+  チャット形式の対話型 LLM（大規模言語モデル）を初期化します。  
+  質問に対する回答生成や、複数のドキュメントから情報を統合する際に使用されます。
+
+---
+
+### 4. シンプルなプロンプトチェーンの作成（※コメントアウト部分）
+
+```python
+    query = "what is pinecone in machine learning?"
+    chain = PromptTemplate.from_template(template=query) | llm
+    # result = chain.invoke(input={})
+    # print(result.content)
+```
+
+- **`query = "what is pinecone in machine learning?"`**  
+  ユーザーからの質問を文字列として定義しています。
+
+- **`chain = PromptTemplate.from_template(template=query) | llm`**
+
+  - `PromptTemplate.from_template(template=query)`  
+    与えられた文字列を元にプロンプトテンプレートを生成します。
+  - `| llm`  
+     生成したプロンプトを LLM にパイプラインのように渡すことで、簡単なチェーン（処理の流れ）を構築しています。  
+    ※ このチェーンは単一のプロンプトを LLM へ送信して回答を得るシンプルな例ですが、実際には下記のリトリーバルチェーンを使用しています。
+
+- **コメントアウト部分**  
+  `chain.invoke(input={})` や `print(result.content)` は実際にチェーンを実行して結果を出力する処理ですが、今回は実行せずにスキップされています。
+
+---
+
+### 5. Pinecone ベクトルストアの設定
+
+```python
+    vectorstore = PineconeVectorStore(
+        index_name=os.getenv("INDEX_NAME"), embedding=embeddings
+    )
+```
+
+- **`PineconeVectorStore`**  
+  Pinecone というベクトルデータベースを利用して、テキストデータの類似度検索を行うためのオブジェクトです。
+
+- **パラメータ**
+  - `index_name=os.getenv("INDEX_NAME")`  
+    環境変数からインデックス名を取得します。インデックスは Pinecone 上でデータが保存されている領域を指します。
+  - `embedding=embeddings`  
+    先ほど初期化した OpenAIEmbeddings のインスタンスを渡すことで、テキストをベクトルに変換する処理を連携させます。
+
+---
+
+### 6. Retrieval QA チャットプロンプトの取得
+
+```python
+    retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+```
+
+- **`hub.pull("langchain-ai/retrieval-qa-chat")`**  
+  LangChain のハブから、既存の「retrieval-qa-chat」という名前のプロンプトテンプレート（またはチェーン）をダウンロードします。  
+  これは、複数のドキュメントから情報をまとめて質問に答える際に適したプロンプトです。
+
+---
+
+### 7. ドキュメント統合チェーンの作成
+
+```python
+    combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
+```
+
+- **`create_stuff_documents_chain`**  
+  検索結果として得られた複数のドキュメントを、LLM とプロンプトを使って一つの回答にまとめるためのチェーンを作成します。
+  - **引数**
+    - `llm`: 回答生成に利用する言語モデル。
+    - `retrieval_qa_chat_prompt`: 統合のために利用するプロンプトテンプレート。  
+      このチェーンは、類似度検索で取得した複数の情報を「stuff（詰め込む）」て、最終的な回答文を生成する役割を担います。
+
+---
+
+### 8. リトリーバルチェーンの作成
+
+```python
+    retrieval_chain = create_retrieval_chain(
+        retriever=vectorstore.as_retriever(), combine_docs_chain=combine_docs_chain
+    )
+```
+
+- **`create_retrieval_chain`**  
+  質問に対して、まず関連するドキュメントを検索（リトリーバル）し、その後にそれらの情報を統合して回答を生成する一連のプロセスをチェーンとして構築します。
+
+- **パラメータ**
+  - `retriever=vectorstore.as_retriever()`  
+    PineconeVectorStore を「リトリーバー」に変換します。これにより、入力クエリに対して最も関連性の高いドキュメントをベクトル検索で取得できるようになります。
+  - `combine_docs_chain=combine_docs_chain`  
+    先ほど作成した、取得したドキュメントを統合して回答を生成するチェーンを組み込みます。
+
+---
+
+### 9. クエリの実行と結果の出力
+
+```python
+    result = retrieval_chain.invoke(input={"input": query})
+    print(result)
+```
+
+- **`retrieval_chain.invoke(input={"input": query})`**
+
+  - リトリーバルチェーンを実行することで、以下の一連の処理が行われます:
+    1. 入力された `query` を用いて、Pinecone ベクトルストアから類似度の高いドキュメントが検索される。
+    2. 取得したドキュメント群が、`combine_docs_chain` によって一つの回答に統合される。
+    3. 統合された内容をもとに、LLM が最終的な回答を生成する。
+
+- **`print(result)`**  
+  チェーンの実行結果（LLM による回答や統合結果）が出力されます。
+
+---
+
+### 全体のまとめ
+
+このコードは、以下のようなワークフローを実現しています:
+
+1. **環境準備**: `.env` から必要な環境変数を読み込み、Pinecone のインデックス名などを取得。
+2. **モデルの初期化**: OpenAI の埋め込みモデルとチャット LLM を初期化。
+3. **リトリーバル準備**: Pinecone を利用して、ベクトル検索ができるリトリーバーを構築。
+4. **プロンプトとチェーンの設定**: ハブから適切なプロンプトを取得し、複数のドキュメントを統合するチェーンを作成。
+5. **質問の実行**: ユーザーの質問に対して、関連ドキュメントを検索し、統合して回答を生成。
+
+この仕組みにより、大量のデータから最も関連性の高い情報を抽出し、LLM を使ってわかりやすい回答を生成するリトリーバル QA システムが実現されています。
+
+</details>
+
+<details>
+<summary>リトリーバルQAシステムについて</summary>
+これらの2行のコードは、**リトリーバルQAシステム**を構築するための重要なステップです。具体的には、以下のような処理を自動化しています。
+
+---
+
+### 1. 複数のドキュメントを統合するチェーンの作成
+
+```python
+combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chat_prompt)
+```
+
+- **目的**:  
+  複数の関連ドキュメントから得られた情報を 1 つにまとめ、LLM に最終回答を生成させるためのチェーンを作成します。
+
+- **具体例**:  
+  例えば、ユーザーが「What is pinecone in machine learning?」という質問をしたとします。  
+  この質問に対して、Pinecone に関する複数の情報（例えば、Pinecone がベクトルデータベースである、どのように使われるかなど）がデータベースから取得されるとします。  
+  そのとき、`combine_docs_chain` は取得された各文書（例：ドキュメント A、ドキュメント B、ドキュメント C）をひとつのプロンプトにまとめます。  
+  まとめたプロンプトは、
+
+  > 「以下の情報を参考にして、'What is pinecone in machine learning?' に答えてください。  
+  > ドキュメント A: ...  
+  > ドキュメント B: ...  
+  > ドキュメント C: ...」  
+  > のような形になり、LLM が全体の文脈を把握して回答を生成できるようになります。
+
+- **ポイント**:
+  - `llm`: 回答生成に使われる大規模言語モデル。
+  - `retrieval_qa_chat_prompt`: どのように情報を統合し、質問に回答するかのフォーマット（プロンプトテンプレート）を定義しているもの。
+
+---
+
+### 2. リトリーバルと統合を連携するチェーンの作成
+
+```python
+retrieval_chain = create_retrieval_chain(
+    retriever=vectorstore.as_retriever(), combine_docs_chain=combine_docs_chain
+)
+```
+
+- **目的**:  
+  ユーザーの質問に対して、まず Pinecone ベクトル DB から関連するドキュメントを検索（リトリーバル）し、その後、先ほど作成した`combine_docs_chain`で複数のドキュメントを統合して最終回答を生成する一連の流れを構築します。
+
+- **具体例**:  
+  再び「What is pinecone in machine learning?」という質問を考えます。
+
+  1. **検索ステップ**:  
+     `vectorstore.as_retriever()` がこの質問を元に、Pinecone 内のインデックスから最も関連性の高い複数の文書（例えば、技術ドキュメント、記事、説明文）を返します。
+  2. **統合ステップ**:  
+     取得された文書群が、`combine_docs_chain` に渡され、上記のようなひとつの大きなプロンプトにまとめられます。
+  3. **回答生成**:  
+     最終的に、LLM がこの統合されたプロンプトを元に、ユーザーの質問に対する適切な回答を生成します。
+
+- **ポイント**:
+  - **リトリーバー**: ベクトル DB から質問に関連する情報を取得する役割。
+  - **統合チェーン**: 取得された情報を整理して、LLM に渡すための適切な形にする役割。
+
+---
+
+### なぜこれらが必要なのか？
+
+- **シンプルな例だけでは不足**:  
+  単に LLM に質問を送るだけでは、広範な知識を持っていても、特定のドメインの最新情報や詳細な専門情報を正確に回答するのは難しい場合があります。
+
+- **検索と生成の連携**:  
+  ここでは、**検索（Retrieval）** と **生成（Generation）** の 2 つのプロセスを組み合わせています。
+
+  - **検索**で信頼性のあるドキュメントから情報を抽出し、
+  - **統合と生成**でその情報をもとに最終的な回答を生成することで、より正確で具体的な回答が得られる仕組みになっています。
+
+- **自動化とスケーラビリティ**:  
+  このチェーンの設計により、ユーザーは単一のクエリを入力するだけで、複数のドキュメントの検索と統合、そして回答生成が自動的に行われるため、手動で情報を収集してまとめる必要がなくなります。
+
+---
+
+### まとめ
+
+- **`create_stuff_documents_chain`**: 複数のドキュメントを一つにまとめて、LLM が利用しやすい形に変換するチェーン。
+- **`create_retrieval_chain`**: ユーザーの質問に対して、まず関連情報を検索し、その後に統合チェーンを使って最終回答を生成する一連のプロセスを実現するチェーン。
+
+これにより、例えば「What is pinecone in machine learning?」という質問に対して、データベースから関連文書を取得し、それらの文書を LLM で統合して、ユーザーにわかりやすい回答を返すことが可能になります。
+
+</details>
