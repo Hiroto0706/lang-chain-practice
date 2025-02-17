@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import CharacterTextSplitter
 
-from langchain_openai import OpenAIEmbeddings, OpenAI
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     print(documents)
 
     text_splitter = CharacterTextSplitter(
-        chunk_size=3000, chunk_overlap=30, separator="\n"
+        chunk_size=1500, chunk_overlap=30, separator="\n"
     )
     docs = text_splitter.split_documents(documents=documents)
 
@@ -37,11 +37,11 @@ if __name__ == "__main__":
 
     retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
     combine_docs_chain = create_stuff_documents_chain(
-        OpenAI(), retrieval_qa_chat_prompt
+        ChatOpenAI(model_name="gpt-4o-2024-05-13"), retrieval_qa_chat_prompt
     )
     retrieval_chain = create_retrieval_chain(
         new_vectorstore.as_retriever(), combine_docs_chain
     )
 
-    res = retrieval_chain.invoke({"input": "Give me the gist of ReAct in 3 sentences"})
+    res = retrieval_chain.invoke({"input": "地動説をわかりやすくまとめてください。"})
     print(res["answer"])
