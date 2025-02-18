@@ -2173,3 +2173,4 @@ LangChainのtext_splitterでは、**chunk_size** と **chunk_overlap** のパラ
 </details>
 
 ### まとめ
+- 
