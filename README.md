@@ -2096,6 +2096,101 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   まとめると、チャンクサイズは情報の豊かさと簡潔さのバランスを調整するための重要なパラメータであり、ユースケースに応じて使い分ける必要があります。
   </details>
 
+- **RAGに関して勘違いしていたのでメモメモ**
+
+  RAG（Retrieval Augumented Generation）を前までLangChainのRAGに関する関数を使ってLLMの実行プロセスの中で外部のデータソースにアクセスして、そこからコンテキストを取得して、プロンプトのコンテキストに渡すことを指すのだと思っていたけど、実際そうではないらしい。
+
+  実際は、RAGとは外部の情報源からデータを取得し、それをコンテキストとして用いるプロセス全体のことを指す。
+
+  会社で開発しているLLMプロジェクトでは「タスクジェネレーター」「SQLビルダー」「アナライザー」という3つのLLMが登場する。このSQLビルダーは直接DBを見に行くわけではなく、プロンプトにて定義されたfew shotのSQLを用いてユーザーが必要とする情報を取得できそうなSQLを作成するという役割をになっている。
+
+  「これはRAGじゃないのでは？」と思っていたのだが、これも立派なRAGなのである。
+
+  なぜならRAGとは外部の情報源からデータを取得してコンテキストに渡すというプロセスそのものを指すから。SQLビルダーを介して、外部の情報源にアクセスして必要なコンテキストを取得することはできているので、これも立派なRAGなのである。知れてよかった。
+
+  <details>
+  <summary>添削</summary>
+  はい、その理解は正しいです！
+
+  **補足説明:**
+
+  - **RAGの定義:**  
+    RAG（Retrieval Augmented Generation）は、外部の情報源からデータを取得し、そのデータをLLMの生成プロセスに組み込む全体のプロセスを指します。必ずしもLangChainの専用関数を使う必要はなく、どのような方法で外部情報を取り込むかは問われません。
+
+  - **あなたのプロジェクトの場合:**  
+    - **タスクジェネレーター、SQLビルダー、アナライザーの役割:**  
+      SQLビルダーは、直接データベースを参照するのではなく、定義されたfew-shotのSQLプロンプトを用いて、ユーザーの要求に応じたSQL文を生成し、その結果を取得しています。
+    - **RAGとしてのプロセス:**  
+      この方法でも、外部データベース（PostgreSQL）から必要な情報を取得し、その情報をLLMのコンテキストとして利用しているので、RAGの本質である「外部情報の取得とその利用」が実現されています。
+
+  つまり、SQLビルダーを介して外部の情報源からデータを取り出し、それをコンテキストに組み込むプロセスも、立派なRAGに該当します。
+  </details>
+
+- **上記の続き**
+
+  ここで疑問になってくるのが、「じゃあなんでPostgreSQLから関連するデータを取得する」という処理をchainの中に含めないのか？含めた方が楽じゃない？というもの。
+
+  調べてみた感じ。それ自体はできそう。
+  以下の記事を参考にすると、
+
+  https://zenn.dev/team_nishika/articles/481ecd7f48b8be
+
+  このような記述がある。
+
+  ```python
+  def answer(self, query: str) -> Dict:
+          """
+          質問に対する回答を返す
+          Args:
+              query (str): 質問
+          Returns:
+              Dict: 回答
+          """
+          output_parser = StrOutputParser()
+          model = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0)
+          prompt = ChatPromptTemplate.from_template(
+              """
+              以下のcontextだけに基づいて回答してください。
+              {context}
+              
+              質問: 
+              {question}
+              """
+          )
+
+          rag_chain_from_docs = RunnablePassthrough() | prompt | model | output_parser
+
+          rag_chain_with_source = RunnableParallel(
+              {"context": self.vector_store.as_retriever(search_kwargs={"k": 3}), "question": RunnablePassthrough()}
+          ).assign(answer=rag_chain_from_docs)
+          return rag_chain_with_source.invoke(query)
+  ```
+
+  クラスメソッドの中にごりごりに`vector_stre.as_retriever()`という記述があるのだ。
+  そして、このvector_storeはPostgreSQLを用いて実装している。（以下参照）
+
+  ```python
+  def initialize_vector_store(self):
+      """
+      ベクトルストアの初期化
+      Returns:
+          PGVector: ベクトルストア
+      """
+      embedding = OpenAIEmbeddings(model="text-embedding-3-small")
+      documents = [Document(page_content=text) for text in self.df["text"].to_list()]
+      # PostgreSQLにベクトルストアを作成
+      return PGVector.from_documents(
+          collection_name=self.COLLECTION_NAME,
+          connection_string=self.con_str,
+          embedding=embedding,
+          documents=documents,
+          pre_delete_collection=True,  # 既存のコレクションを削除し、毎回作り直す
+      )
+  ```
+
+  pv_vectorを使えばPosgreSQLをベクトルDBとして扱うことができ、それを`as_retriver()`でembeddingsがリトリーブするための対象として引数に渡せば、postgresを使ったRAGを実装することができる！
+
+
 ### ChatGPT による解説
 
 <details>
@@ -2172,6 +2267,75 @@ LangChainのtext_splitterでは、**chunk_size** と **chunk_overlap** のパラ
 このように、**chunk_size** と **chunk_overlap** の調整は、LangChain でのテキスト分割後の情報検索や生成結果の品質に大きな影響を与えるため、利用ケースに応じた最適なバランスを見つけることが重要です。
 
 </details>
+
+<details>
+<summary>RAGとは？</summary>
+RAG（Retrieval Augmented Generation）とは、**外部の情報源から関連するコンテキストを取得し、それをLLM（大規模言語モデル）の生成プロセスに組み込むことで、より正確かつ詳細な回答を生み出す仕組み**です。つまり、LLM単体では内部知識に頼って応答を生成するのに対し、RAGは外部データをリアルタイムに取り込むことで、最新情報や専門知識などを補完しながら応答を生成します。
+
+以下、具体例を交えて詳しく説明します。
+
+---
+
+### 1. RAG の基本プロセス
+
+1. **ユーザーのクエリ受け取り**  
+   ユーザーからの質問やリクエストを受け取ります。
+
+2. **外部データから関連情報の取得**
+
+   - **ベクトルストア（例：FAISS）**
+     - テキストデータを事前にチャンクに分割し、各チャンクを埋め込み（embedding）に変換して FAISS に格納します。
+     - ユーザーのクエリを埋め込み化し、FAISS 上で類似性検索を実施。
+     - 最も関連性の高いチャンクを取得します。
+   - **リレーショナルデータベース（例：PostgreSQL）**
+     - LLM に SQL 生成用のプロンプトを渡し、クエリに対応する関連情報を取得する SQL を生成。
+     - Python コードでその SQL を実行し、PostgreSQL から必要なデータを抽出します。
+
+3. **取得した情報を LLM のコンテキストに統合**  
+   取得した情報（コンテキスト）を LLM に渡して、元の質問に対する回答生成を強化します。
+
+4. **LLM による回答生成**  
+   コンテキスト付きで LLM が応答を生成し、最終的な回答がユーザーに提供されます。
+
+---
+
+### 2. 具体例
+
+#### 具体例 1: FAISS を用いた RAG
+
+- **シナリオ:** ニュース記事から最新の経済情報を取得して回答を生成する
+- **プロセス:**
+  1. **準備:** 膨大なニュース記事を事前にテキストチャンクに分割し、各チャンクを BERT や OpenAI の埋め込みモデルでベクトル化。これらのベクトルを FAISS に格納します。
+  2. **クエリ処理:** ユーザーが「最新の経済動向はどうなっている？」と質問。
+  3. **検索:** 質問を埋め込み化し、FAISS で類似性検索を実施。最も関連性の高い複数のチャンク（例：4〜5 個）を取得します。
+  4. **生成:** 取得したチャンクを LLM の入力コンテキストとして付加し、回答生成を実施。
+  5. **結果:** 最新の経済情報を反映した、詳細かつ具体的な回答が得られます。
+
+#### 具体例 2: PostgreSQL を用いた RAG
+
+- **シナリオ:** 顧客サポートにおいて、FAQ データベースから関連するサポート情報を取得して回答を生成する
+- **プロセス:**
+  1. **プロンプト生成:** ユーザーの問い合わせに基づいて、LLM が適切な SQL クエリを生成するためのプロンプトを作成します。
+  2. **SQL 生成:** LLM が「顧客 ID」や「問い合わせ内容」を元に、関連する FAQ やサポート記事を検索する SQL 文を生成。
+  3. **データ取得:** Python コードを通じて、生成された SQL を PostgreSQL に対して実行。関連するデータを取得します。
+  4. **加工:** OutputParser などで取得データを整形し、再度 LLM に要約や回答生成を依頼します。
+  5. **生成:** 加工された情報を元に、LLM が最終的なサポート回答を生成し、ユーザーに提供されます。
+
+---
+
+### 3. まとめ
+
+- **RAG の定義:**  
+  RAG は、LLM が外部の情報（例：ベクトルストア、リレーショナル DB）から関連情報を動的に取得し、その情報を補完コンテキストとして回答生成に活用するプロセス全体を指します。
+
+- **実装方法の多様性:**  
+  RAG は特定のライブラリに依存せず、FAISS のようなベクトル検索、または PostgreSQL のような従来のデータベースを使っても実現可能です。どちらの場合も、外部情報を取り込むという点で RAG の本質に合致しています。
+
+- **利点:**  
+  最新情報や専門的な知識をリアルタイムに取得できるため、LLM の回答がより正確で信頼性の高いものになります。
+
+以上のように、RAG は外部データを活用して LLM の生成プロセスを強化する手法であり、その実装方法は多岐にわたるものの、基本的な考え方は同じです。これにより、例えばクラウド環境に頼らずとも、ローカル環境で小規模なデータを扱う場合でも RAG を実現できる点が魅力です。
+</dietals>
 
 ### まとめ
 
