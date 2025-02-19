@@ -2190,18 +2190,18 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   pv_vector を使えば PosgreSQL をベクトル DB として扱うことができ、それを`as_retriver()`で embeddings がリトリーブするための対象として引数に渡せば、postgres を使った RAG を実装することができる！
 
-- **RAGで使うときに意識しておくといいこと**
+- **RAG で使うときに意識しておくといいこと**
 
-  RAGを使うときに考えておくといいことをまとめる。
+  RAG を使うときに考えておくといいことをまとめる。
 
-  それは、RAGを使って取得するデータが構造化データなのか非構造化データなのかどうかということ。
-  取得したいデータが構造化データの場合はTextToSQLといって、テキストから必要なデータを取得するためのSQLを生成してもらい、それを元に必要なデータを取得するというアプローチ。
+  それは、RAG を使って取得するデータが構造化データなのか非構造化データなのかどうかということ。
+  取得したいデータが構造化データの場合は TextToSQL といって、テキストから必要なデータを取得するための SQL を生成してもらい、それを元に必要なデータを取得するというアプローチ。
 
-  一方で非構造化データの場合はembeddingsモデルを使った意味的推論によるRAGが適している。
+  一方で非構造化データの場合は embeddings モデルを使った意味的推論による RAG が適している。
 
-  このように取得するデータが何かによってRAG実装のアプローチは変わってくるということを覚えておこう。
+  このように取得するデータが何かによって RAG 実装のアプローチは変わってくるということを覚えておこう。
 
-  ちなみに、ここでいう非構造化データとはレビューや記事、メモといったSQLでは表現することが難しいようなデータ構造のことを指す。
+  ちなみに、ここでいう非構造化データとはレビューや記事、メモといった SQL では表現することが難しいようなデータ構造のことを指す。
 
 - **ChatOpenAI()の verbose ってなんだ？**
 
@@ -2210,6 +2210,93 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   ![alt text](images/image_4.jpg)
 
   これは日本語で冗長という意味。これが True になっていると LLM の思考プロセスをコンソールに書き出してくれるようになる。
+
+- **invoke()の結果のキーを変更したい時**
+
+  これかなーりシンプルだけどいいなと思ったのでメモ。
+
+  invoke メソッドの resuponse のキーは固定されている。
+
+  ```
+  {
+    "input": "",
+    "answer": "",
+    "context: "",
+  }
+  ```
+
+  このようになっている。
+  ちょっと嫌だな〜と思う場合はシンプルだが、以下のようにしてみると良い。
+
+  ```python
+    result = qa.invoke(input={"input": query})
+    new_result = {
+        "query": result["input"],
+        "result": result["answer"],
+        "source_documents": result["context"]
+    }
+    return new_result
+  ```
+
+  これはかなりシンプルだけど、「たしかにいいな」と思ったのでメモ。
+
+  ![alt text](images/image_5.png)
+
+  デバッグしてみたら確かに値が変わっている。いいね。
+
+
+- **Streamlitを使って爆速でリッチUIなLLMアプリを作る方法**
+
+  詳しくは[こちら](https://monta-database.notion.site/Streamlit-19fcca65093280daa6fac42f46ac2d4a?pvs=4)をチェック！
+
+  ちなみにstreamlistでは組み込みのUI表示の関数がある。
+  例えば、`st.chat_message("user").write("Hello World")`のようにすると、以下のようにリッチなUIのメッセージが表示されるようになる。
+
+  ![alt text](images/image_6.png)
+
+  さらに詳しく知りたい場合は[こちら](https://docs.streamlit.io/develop/api-reference/chat/st.chat_message)のドキュメントを参考にどうぞ
+
+
+- **Streamlistのsession_satateについて**
+
+  session_stateを使うことで、要は会話履歴の保持ができるようになる。
+
+  以下の記事がめちゃくちゃ参考になった。
+
+  https://qiita.com/kuriyan1204/items/d8342f3a40c6aeb57e5e
+
+  ```python
+  import streamlit as st
+
+  st.title('Counter Example')
+  count = 0
+
+  increment = st.button('Increment')
+  if increment:
+      count += 1
+
+  st.write('Count = ', count)
+  ```
+
+  このようにstreamlitを実行し、incrementを実行しようとしても、ボタンを押した時にstreamlit側では初期化をしてしまうらしく、その結果`0 + 1 = 1`が繰り返され、１が表示されるだけになってしまう。
+
+  このような問題を解決するのがStreamlistのsesion_stateである。
+
+  以下のように`st.session_state.count`を追加することで、値を保持してくれるようになるのだ。まぁ、session_stateを使えば変数みたいに値を保持できますよっていうことだね。
+
+  ```python
+  import streamlit as st
+
+  st.title('Counter Example')
+  if 'count' not in st.session_state: 
+    st.session_state.count = 0 #countがsession_stateに追加されていない場合，0で初期化
+
+  increment = st.button('Increment')
+  if increment:
+      st.session_state.count += 1 #値の更新
+
+  st.write('Count = ' + str(st.session_state.count))
+  ```
 
 ### ChatGPT による解説
 
