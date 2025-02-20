@@ -36,7 +36,7 @@ if prompt:
             query=prompt, chat_history=st.session_state["chat_history"]
         )
         sources = set([
-            doc.metadata["source"]
+            doc.metadata["sourceURL"]  # doc.metadata["sourceURL"]
             for doc in generated_response["source_documents"]
         ])
 
@@ -47,6 +47,7 @@ if prompt:
         st.session_state["chat_history"].append(("human", prompt))
         st.session_state["chat_history"].append(
             ("ai", generated_response["result"]))
+        prompt = ""
 
 if st.session_state["chat_answers_history"]:
     for user_query, generatted_response in zip(st.session_state["user_prompt_history"], st.session_state["chat_answers_history"]):

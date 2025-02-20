@@ -2244,22 +2244,20 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   デバッグしてみたら確かに値が変わっている。いいね。
 
-
-- **Streamlitを使って爆速でリッチUIなLLMアプリを作る方法**
+- **Streamlit を使って爆速でリッチ UI な LLM アプリを作る方法**
 
   詳しくは[こちら](https://monta-database.notion.site/Streamlit-19fcca65093280daa6fac42f46ac2d4a?pvs=4)をチェック！
 
-  ちなみにstreamlistでは組み込みのUI表示の関数がある。
-  例えば、`st.chat_message("user").write("Hello World")`のようにすると、以下のようにリッチなUIのメッセージが表示されるようになる。
+  ちなみに streamlist では組み込みの UI 表示の関数がある。
+  例えば、`st.chat_message("user").write("Hello World")`のようにすると、以下のようにリッチな UI のメッセージが表示されるようになる。
 
   ![alt text](images/image_6.png)
 
   さらに詳しく知りたい場合は[こちら](https://docs.streamlit.io/develop/api-reference/chat/st.chat_message)のドキュメントを参考にどうぞ
 
+- **Streamlist の session_satate について**
 
-- **Streamlistのsession_satateについて**
-
-  session_stateを使うことで、要は会話履歴の保持ができるようになる。
+  session_state を使うことで、要は会話履歴の保持ができるようになる。
 
   以下の記事がめちゃくちゃ参考になった。
 
@@ -2278,17 +2276,17 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   st.write('Count = ', count)
   ```
 
-  このようにstreamlitを実行し、incrementを実行しようとしても、ボタンを押した時にstreamlit側では初期化をしてしまうらしく、その結果`0 + 1 = 1`が繰り返され、１が表示されるだけになってしまう。
+  このように streamlit を実行し、increment を実行しようとしても、ボタンを押した時に streamlit 側では初期化をしてしまうらしく、その結果`0 + 1 = 1`が繰り返され、１が表示されるだけになってしまう。
 
-  このような問題を解決するのがStreamlistのsesion_stateである。
+  このような問題を解決するのが Streamlist の sesion_state である。
 
-  以下のように`st.session_state.count`を追加することで、値を保持してくれるようになるのだ。まぁ、session_stateを使えば変数みたいに値を保持できますよっていうことだね。
+  以下のように`st.session_state.count`を追加することで、値を保持してくれるようになるのだ。まぁ、session_state を使えば変数みたいに値を保持できますよっていうことだね。
 
   ```python
   import streamlit as st
 
   st.title('Counter Example')
-  if 'count' not in st.session_state: 
+  if 'count' not in st.session_state:
     st.session_state.count = 0 #countがsession_stateに追加されていない場合，0で初期化
 
   increment = st.button('Increment')
@@ -2303,7 +2301,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   `create_history_aware_retriever()`を使うと、会話履歴を考慮してベクトル検索を行うことができる。
   具体的には以下のステップで行う。
 
-  (1) **rephraseのためのプロンプトテンプレートを作成する**:
+  (1) **rephrase のためのプロンプトテンプレートを作成する**:
 
   リフレーズのためのプロンプトテンプレートを作成することから始めよう。
 
@@ -2311,7 +2309,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
   ```
 
-  今回のチュートリアルでは上記のプロンプトをpullして使っていた。具体的な内容は以下の通り。
+  今回のチュートリアルでは上記のプロンプトを pull して使っていた。具体的な内容は以下の通り。
 
   ```
   Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
@@ -2326,7 +2324,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   (2) **create_history_aware_retriever()を使って会話履歴を考慮してベクトル検索するためのリトリーバーを作成する**:
 
-  やり方はめちゃくちゃ簡単。以下のようにcreate_history_aware_retriever()を呼び出し、引数にllm, retriever, promptを渡すだけ。
+  やり方はめちゃくちゃ簡単。以下のように create_history_aware_retriever()を呼び出し、引数に llm, retriever, prompt を渡すだけ。
 
   ```python
     history_aware_retriever = create_history_aware_retriever(
@@ -2341,9 +2339,9 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   chain = prompt | llm | StrOutputParser() | retriever,
   ```
 
-  (3) **create_retireval_chain()の引数のretrieverとして(2)のレスポンスを渡す**:
+  (3) **create_retireval_chain()の引数の retriever として(2)のレスポンスを渡す**:
 
-  `create_retrival_chain()`はRAGを実行するためのチェーンを作成してくれる関数である。その関数のretirever引数に(2)で作成したretrieverを渡すことで、会話履歴を考慮したベクトル検索ができるようになるのだ。
+  `create_retrival_chain()`は RAG を実行するためのチェーンを作成してくれる関数である。その関数の retirever 引数に(2)で作成した retriever を渡すことで、会話履歴を考慮したベクトル検索ができるようになるのだ。
 
   ```python
     qa = create_retrieval_chain(
@@ -2358,15 +2356,15 @@ vectorstore = FAISS.from_documents(docs, embeddings)
     result = qa.invoke(input={"input": query, "chat_history": chat_history})
   ```
 
-  上記のようにinvoke()の引数にchat_historyを含める。このchat_historyは"langchain-ai/chat-langchain-rephrase"のシステムプロンプトの変数としてchat_historyが含まれているから。
+  上記のように invoke()の引数に chat_history を含める。この chat_history は"langchain-ai/chat-langchain-rephrase"のシステムプロンプトの変数として chat_history が含まれているから。
 
   実際に動かしてみる。
 
-  まず初めにSystem Promptについて質問する。その後、具体例を教えてくださいと質問するとしっかりとSystem Promptの具体例が返ってきていることがわかる。
+  まず初めに System Prompt について質問する。その後、具体例を教えてくださいと質問するとしっかりと System Prompt の具体例が返ってきていることがわかる。
 
   ![alt text](images/image_7.png)
 
-  LangSmithの実行結果を見てみると、以下のようにシステムプロンプトの中にしっかりとchat_historyが含まれていることがわかる。
+  LangSmith の実行結果を見てみると、以下のようにシステムプロンプトの中にしっかりと chat_history が含まれていることがわかる。
 
   ```
   {
@@ -2377,7 +2375,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   }
   ```
 
-  さらにこのコンテキストを考慮してllmは以下の質問を生成する。
+  さらにこのコンテキストを考慮して llm は以下の質問を生成する。
 
   ```
   {
@@ -2385,7 +2383,75 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   }
   ```
 
-  会話履歴を考慮して、「あ、この人が言っている具体例っていうのは、System Promptのことだな」とAIが返している。
+  会話履歴を考慮して、「あ、この人が言っている具体例っていうのは、System Prompt のことだな」と AI が返している。
+
+- **firecrawl を使ったベクトル DB の作成がめちゃくちゃ便利**:
+
+  [firecrawl](https://www.firecrawl.dev/)を使えばベクトル DB の作成がめちゃくちゃ楽になる。
+
+  firecrawl は与えられた URL のサイトをクロールし、その情報をマークダウンや JSON 形式でまとめてくれるというサービス。
+
+  また、firecrawl は LangChain のドキュメントローダーにも含まれている。
+
+  https://python.langchain.com/v0.2/docs/integrations/document_loaders/firecrawl/
+
+  そのため、以下のようにコードを書くことで、好きな URL をクロールし、embeddings モデルを使ってベクトル DB にぶち込むことができるのだ。便利すぎる…
+
+  ```python
+    from langchain_community.document_loaders import FireCrawlLoader
+
+    langchain_documents_base_urls = [
+        # URL List
+    ]
+
+    for url in langchain_documents_base_urls:
+        print(f"FireCrawling {url=}")
+
+        loader = FireCrawlLoader(
+            url=url,
+            mode="scrape",
+        )
+
+        raw_docs = loader.load()
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=600, chunk_overlap=50
+        )
+        documents = text_splitter.split_documents(raw_docs)
+
+        PineconeVectorStore.from_documents(
+            documents, embeddings, index_name="firecrawl-index"
+        )
+
+        print(f"**** Loading {url}* to vectorestore done ****")
+  ```
+
+  個人的に衝撃的だったのが langchain のドキュメントローダーに firecrawl が含まれていること。URL と mode を指定するだけで、よしなにその URL の情報を取得し、テキストスプリッターやら embeddings やらに渡せるのが便利すぎる。
+
+  ※これは余談だが、本のメモなどをテキストスプリットする場合はchunk_sizeは大きくした方が良い。600とかだとあまり多くの情報を含まないためだ。また、マークダウンで書かれてあるようなサイトだとテキスト以外の情報が多いので600とかだと全く重要な情報はチャンクに含まれない。
+
+- **テキストスプリッターって重要やったんやって話**
+
+  埋め込みの開発をしている時に、以下のようなエラーに出会した。
+
+  ```python
+  HTTP response body: {"code":3,"message":"Metadata size is 42177 bytes, which exceeds the limit of 40960 bytes per vector","details":[]}
+
+  # HTTP 応答本文: {"code":3,"message":"メタデータのサイズは 42177 バイトで、ベクトルあたり 40960 バイトの制限を超えています","details":[]}
+  ```
+
+  要はPineconeが許容しているベクトルデータのバイト数は40960バイトなのに対して、埋め込もうとしているベクトルデータがそれを超えているからエラーになっていたのだ。
+
+  ちなみに、この問題はテキストスプリッターを使うことで解決する。
+
+  それはなぜかを解説する。感覚的には『ドキュメントの長さがは変わっていないので、バイト数は変わらないんじゃ？』と思うかもしれない。
+
+  しかし、実際にはテキストスプリットをすることでベクトルデータのバイト数は減るのだ。
+  その理由はメタデータの数が減るからである。
+
+  単純に長いドキュメントを埋め込もうとすると、メタデータの量も膨大になり、結果として上限を超えてしまうのだ。ちなみにメタデータにはURLやタイトルなど多くの情報が含まれる。
+
+  なので直接埋め込もうとすると、エラーになるので長いドキュメントの時はテキストを分割して埋め込むようにしようねということだ。勉強になりました。
 
 ### ChatGPT による解説
 
@@ -2661,6 +2727,223 @@ print(response)
   - Embeddings モデルとベクトル DB を組み合わせることで、ユーザーの質問に対し意味的に一致する情報を柔軟に取得できる。
 
 このように、用途に合わせて RAG のアプローチを使い分けることで、最適な情報取得と LLM による回答生成が実現できます。
+
+</details>
+
+<details>
+<summary>create_history_aware_retrieverについて</summary>
+LangChain の `create_history_aware_retriever` は、従来の単一クエリに基づく検索ではなく、会話の文脈（履歴）を踏まえた情報検索を実現するための仕組みです。これにより、ユーザーとの対話が進む中で出現する曖昧な指示（例えば「彼」や「それ」など）に対しても、過去のやり取りから文脈を補完し、より適切な情報を取得できます。
+
+---
+
+## 1. なぜ会話履歴を考慮する必要があるのか？
+
+例えば、以下のような対話を考えてみます：
+
+- **ユーザー:** 「ビル・ゲイツの最新の本について教えて？」
+- **AI:** 「どの本のことですか？」
+- **ユーザー:** 「彼の内容をもう少し詳しく教えて？」
+
+このとき、単純に「彼の内容」とだけ検索してしまうと、「彼」が誰なのか曖昧になり、適切な情報が取得できない可能性があります。そこで、会話履歴（この例では「ビル・ゲイツの最新の本」）をもとに「彼」を解決する必要があります。
+
+`create_history_aware_retriever` は、こうした会話の流れを踏まえて、クエリを改善し、より文脈に沿った情報検索を可能にします。
+
+---
+
+## 2. 具体例を使った実装例
+
+以下に、簡単な Python コードの例を示します。
+
+### 2.1. 前提となるドキュメント
+
+まず、簡単なデータセットとして、いくつかのドキュメントを用意します。
+
+```python
+from langchain.schema import Document
+
+documents = [
+    Document(page_content="イーロン・マスクは2023年に『X』について語った。"),
+    Document(page_content="ジェフ・ベゾスは2022年に新しい宇宙プロジェクトを発表した。"),
+    Document(page_content="ビル・ゲイツは最新の本『気候変動と未来』を2024年に出版した。"),
+]
+```
+
+### 2.2. 通常の Retriever の問題
+
+通常の Retriever を使うと、次のようなコードになりますが、会話履歴を考慮せずに単一クエリのみで検索を実施します。
+
+```python
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+# FAISS ベクトルデータベースを作成
+vectorstore = FAISS.from_documents(documents, OpenAIEmbeddings())
+retriever = vectorstore.as_retriever()
+
+# 単一のクエリで検索
+query = "彼の最新の本について教えて？"
+retrieved_docs = retriever.get_relevant_documents(query)
+
+for doc in retrieved_docs:
+    print(doc.page_content)
+```
+
+この場合、「彼」が誰を指しているのか明確にされていないため、適切な検索結果が得られにくいです。
+
+### 2.3. create_history_aware_retriever を利用する方法
+
+会話履歴を利用して文脈を補完するには、`create_history_aware_retriever` を使います。これにより、過去の対話内容をもとに検索クエリが補完され、より正確な検索が実現します。
+
+```python
+from langchain.chains import ConversationalRetrievalChain
+from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory
+from langchain.retrievers import create_history_aware_retriever
+
+# チャットモデルの初期化
+llm = ChatOpenAI(model_name="gpt-4")
+
+# 会話履歴を保存するメモリをセットアップ
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# 履歴を考慮した Retriever を作成
+history_aware_retriever = create_history_aware_retriever(llm, retriever)
+
+# ConversationalRetrievalChain を利用して対話型のQAチェーンを作成
+qa_chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=history_aware_retriever,
+    memory=memory
+)
+
+# 対話のシミュレーション
+chat_history = []
+
+# ① 最初の質問
+query1 = "ビル・ゲイツの最新の本について教えて？"
+response1 = qa_chain({"question": query1, "chat_history": chat_history})
+chat_history.append((query1, response1["answer"]))
+print("回答1:", response1["answer"])
+
+# ② 続けて質問。ここでは「彼」が先の文脈でビル・ゲイツを指していることが文脈から補完される
+query2 = "彼の内容をもう少し詳しく教えて？"
+response2 = qa_chain({"question": query2, "chat_history": chat_history})
+print("回答2:", response2["answer"])
+```
+
+### 2.4. このコードのポイント
+
+- **会話履歴の保存:**  
+  `ConversationBufferMemory` を使い、過去のやり取りを記録します。これにより、次のクエリが「彼」が誰なのかを履歴から推測できます。
+
+- **履歴を考慮した検索:**  
+  `create_history_aware_retriever` が、現在のクエリだけでなく、過去の対話内容も組み合わせた検索クエリを生成し、適切なドキュメントを取得します。
+
+- **ConversationalRetrievalChain の利用:**  
+  チャットモデル（この例では GPT-4）と履歴考慮型 Retriever を組み合わせることで、自然な対話形式で情報検索が可能となります。
+
+---
+
+## 3. メリット
+
+- **文脈理解の向上:**  
+  単一クエリだけでは捉えきれなかったユーザーの意図を、過去の対話内容を通じて補完できるため、より正確な回答が得られます。
+
+- **自然な対話の実現:**  
+  会話の流れが維持されるため、ユーザーは対話型のシステムと自然にコミュニケーションできます。
+
+- **柔軟な応用:**  
+  FAQ ボットやカスタマーサポート、社内ナレッジベース検索など、文脈を重視する多様な用途に応用できます。
+
+---
+
+## まとめ
+
+`create_history_aware_retriever` は、LangChain において会話の文脈を考慮した情報検索を実現するための強力なツールです。単一のクエリだけでは不十分な場合でも、過去の対話履歴を組み合わせることで、曖昧な表現を解消し、より正確な回答を得ることができます。コード例を通して、その基本的な使い方とメリットが理解できると思います。
+
+</details>
+
+<details>
+<summary>なぜテキストスプリッターが必要なのか？</summary>
+以下は、テキストスプリッターを使う前と使った後でどのようにメタデータのサイズが変わるかを示す具体例です。
+
+---
+
+### 1. テキストスプリッターを使わない場合
+
+例えば、あるウェブページから全文をスクレイピングして、そのままひとつのドキュメントとして扱ったとします。  
+このドキュメントには、長いテキスト（例：HTML の生データや記事全体）が含まれ、そのテキストをそのままメタデータとしても扱う場合を考えます。
+
+```python
+# 長いテキスト（例として単純に 'A' を繰り返した文字列）
+document_text = "A" * 50000  # 50,000文字
+
+# 1件のドキュメントとして作成。メタデータに全文を含めると仮定
+document = {
+    "page_content": document_text,
+    "metadata": {
+        "source": "https://example.com",
+        "full_text": document_text  # メタデータとしても全文を保持している
+    }
+}
+
+# このドキュメントをそのままベクトルDB（例:Pinecone）に投入すると、
+# メタデータサイズが50,000文字分となり、Pineconeの上限40,960バイトを超えてしまう
+```
+
+この場合、ひとつのベクトルに添付されるメタデータが非常に大きいため、先ほどのエラー  
+「Metadata size is 42177 bytes, which exceeds the limit of 40960 bytes per vector」  
+のような問題が発生します。
+
+---
+
+### 2. テキストスプリッターを使った場合
+
+テキストスプリッターを使用すると、長いドキュメントを複数の小さなチャンクに分割します。  
+各チャンクは短いテキストとなるため、メタデータもそのチャンクに対応した分だけとなり、サイズが小さくなります。
+
+```python
+from langchain.text_splitter import CharacterTextSplitter
+
+# 長いテキストは先ほどと同じ
+document_text = "A" * 50000  # 50,000文字
+
+# 文字単位でチャンクに分割する設定（例：1チャンクあたり1000文字、オーバーラップ100文字）
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+chunks = text_splitter.split_text(document_text)
+
+# 各チャンクに対して個別のドキュメントを作成
+documents = []
+for i, chunk in enumerate(chunks):
+    doc = {
+        "page_content": chunk,
+        "metadata": {
+            "source": "https://example.com",
+            "chunk_index": i,
+            # ここでは各チャンクの内容のみをメタデータに含めるか、または含めないなど柔軟に対応できる
+        }
+    }
+    documents.append(doc)
+
+# documents の各項目はそれぞれ小さいテキストになっているため、
+# 1つあたりのメタデータサイズが大幅に低くなります。
+# 例えば、1000文字程度なら、40KB（約40,000バイト）以内に収まります。
+```
+
+このように、全体のドキュメントの長さ自体は変わらなくても、  
+**テキストスプリッターで分割することで、ひとつひとつのチャンク（＝ベクトルに対応するデータ）のサイズが小さくなり、Pinecone のメタデータサイズ制限内に収まる** ようになるのです。
+
+---
+
+### 3. まとめ
+
+- **テキストスプリッターを使わない場合：**  
+  長いドキュメントをそのまま投入すると、ひとつのベクトルに大量のメタデータが付いてしまい、サイズ制限を超えてエラーとなる。
+
+- **テキストスプリッターを使う場合：**  
+  長いドキュメントを複数の小さなチャンクに分割することで、各チャンクのメタデータサイズが小さくなり、エラーを回避できる。
+
+このように、テキストスプリッターはドキュメント全体の内容はそのままに、データを小さな単位に分割して取り扱うことで、ベクトル DB 側の制限に対応し、かつ検索や埋め込み生成の精度を向上させる役割を果たしているのです。
 
 </details>
 

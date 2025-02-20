@@ -11,7 +11,8 @@ from langchain.chains.retrieval import create_retrieval_chain
 load_dotenv()
 
 
-INDEX_NAME = "langchain-doc-index"
+# INDEX_NAME = "langchain-doc-index"
+INDEX_NAME = "firecrawl-index"
 
 
 def run_llm(query: str, chat_history: List[Dict[str, Any]] = []):

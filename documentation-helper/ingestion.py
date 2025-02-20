@@ -36,5 +36,37 @@ def ingest_docs():
     print("****Loading to vectorstore done ****")
 
 
+def ingest_docs2() -> None:
+    from langchain_community.document_loaders import FireCrawlLoader
+
+    langchain_documents_base_urls = [
+        "https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7",
+        "https://monta-database.notion.site/188a9974e2aa4e21b7892f39083569a9",
+        "https://monta-database.notion.site/057600135ae44d49ad433abcac0c5bfe"
+    ]
+
+    for url in langchain_documents_base_urls:
+        print(f"FireCrawling {url=}")
+
+        loader = FireCrawlLoader(
+            url=url,
+            mode="scrape",
+        )
+
+        raw_docs = loader.load()
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=3000, chunk_overlap=100
+        )
+        documents = text_splitter.split_documents(raw_docs)
+
+        PineconeVectorStore.from_documents(
+            documents, embeddings, index_name="firecrawl-index"
+        )
+
+        print(f"**** Loading {url}* to vectorestore done ****")
+
+
 if __name__ == "__main__":
-    ingest_docs()
+    # ingest_docs()
+    ingest_docs2()
