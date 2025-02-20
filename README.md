@@ -2298,6 +2298,95 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   st.write('Count = ' + str(st.session_state.count))
   ```
 
+- **create_history_aware_retriever()を使って会話履歴を考慮してベクトル検索しよう！**
+
+  `create_history_aware_retriever()`を使うと、会話履歴を考慮してベクトル検索を行うことができる。
+  具体的には以下のステップで行う。
+
+  (1) **rephraseのためのプロンプトテンプレートを作成する**:
+
+  リフレーズのためのプロンプトテンプレートを作成することから始めよう。
+
+  ```python
+  rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
+  ```
+
+  今回のチュートリアルでは上記のプロンプトをpullして使っていた。具体的な内容は以下の通り。
+
+  ```
+  Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+
+  Chat History:
+  {chat_history}
+  Follow Up Input: {input}
+  Standalone Question:
+  ```
+
+  要は会話履歴を考慮して新しい質問を作成してくださいってこと。
+
+  (2) **create_history_aware_retriever()を使って会話履歴を考慮してベクトル検索するためのリトリーバーを作成する**:
+
+  やり方はめちゃくちゃ簡単。以下のようにcreate_history_aware_retriever()を呼び出し、引数にllm, retriever, promptを渡すだけ。
+
+  ```python
+    history_aware_retriever = create_history_aware_retriever(
+        llm=chat, retriever=docsearch.as_retriever(), prompt=rephrase_prompt
+    )
+  ```
+
+  こうすることで以下のようなチェーンを作成してくれるようになる。
+
+  ```python
+  # If chat history, then we pass inputs to LLM chain, then to retriever
+  chain = prompt | llm | StrOutputParser() | retriever,
+  ```
+
+  (3) **create_retireval_chain()の引数のretrieverとして(2)のレスポンスを渡す**:
+
+  `create_retrival_chain()`はRAGを実行するためのチェーンを作成してくれる関数である。その関数のretirever引数に(2)で作成したretrieverを渡すことで、会話履歴を考慮したベクトル検索ができるようになるのだ。
+
+  ```python
+    qa = create_retrieval_chain(
+        # ↓これ
+        retriever=history_aware_retriever, combine_docs_chain=stuff_documents_chain
+    )
+  ```
+
+  (4) **invoke()の引数に会話履歴を含める**:
+
+  ```python
+    result = qa.invoke(input={"input": query, "chat_history": chat_history})
+  ```
+
+  上記のようにinvoke()の引数にchat_historyを含める。このchat_historyは"langchain-ai/chat-langchain-rephrase"のシステムプロンプトの変数としてchat_historyが含まれているから。
+
+  実際に動かしてみる。
+
+  まず初めにSystem Promptについて質問する。その後、具体例を教えてくださいと質問するとしっかりとSystem Promptの具体例が返ってきていることがわかる。
+
+  ![alt text](images/image_7.png)
+
+  LangSmithの実行結果を見てみると、以下のようにシステムプロンプトの中にしっかりとchat_historyが含まれていることがわかる。
+
+  ```
+  {
+    "output": {
+      "text": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n[('human', 'System Promptってなんですか？詳細に教えてください！'), ('ai', 'System Promptは、プロンプトテンプレートの一種で、特にシステムメッセージを生成するために使用されます。プロンプトテンプレートは、AIモデルに入力するためのテキストを構築するためのテンプレートであり、さまざまなメッセージタイプに対応しています。SystemMessagePromptTemplateは、システムからの指示や情報を伝えるためのメッセージを作成する際に利用されます。\\n\\nこのテンプレートは、AIモデルが特定のタスクを実行する際に必要な背景情報や指示を提供するために使用されることが多いです。たとえば、ユーザーからの入力に基づいてAIがどのように応答すべきかをガイドするための情報を含めることができます。\\n\\nプロンプトテンプレートは、複数のコンポーネントやプロンプト値から構成されることが多く、これにより柔軟にプロンプトを構築し、AIモデルに適切な入力を提供することが可能になります。')]\nFollow Up Input: 具体例を教えてもらえますか？\nStandalone Question:",
+      "type": "StringPromptValue"
+    }
+  }
+  ```
+
+  さらにこのコンテキストを考慮してllmは以下の質問を生成する。
+
+  ```
+  {
+    "output": "System Promptの具体例を教えてもらえますか？"
+  }
+  ```
+
+  会話履歴を考慮して、「あ、この人が言っている具体例っていうのは、System Promptのことだな」とAIが返している。
+
 ### ChatGPT による解説
 
 <details>
