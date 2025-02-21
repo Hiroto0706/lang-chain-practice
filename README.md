@@ -3443,4 +3443,79 @@ for i, chunk in enumerate(chunks):
 
 ### まとめ
 
--
+この章ではRAG, Embeddings, Streamlit, FireCrawlについて学んだ。
+
+今までの章で学んだことを総括したものっていう印象を持った。
+
+新しく学んだのは以下のもの。
+
+- streamlit
+- `create_history_aware_retriever()`
+- firecrawl loader
+
+である。
+
+特に感動したのがfirecrawl loaderである。
+firacrawlはURLを渡せばそのサイトをクリーリングしてくれるサービスで、さらにLangChainのドキュメントローダーとして使える。
+
+つまり、チェーンの中にFireCrawlを使ったクローリングを組み込み、その結果を別のチェーンに渡すことができるということ。
+
+今回は以下のような使い方をした。
+
+```python
+loader = FireCrawlLoader(
+            url=url,
+            mode="scrape",
+        )
+
+        raw_docs = loader.load()
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=3000, chunk_overlap=100
+        )
+        documents = text_splitter.split_documents(raw_docs)
+
+        PineconeVectorStore.from_documents(
+            documents, embeddings, index_name="firecrawl-index"
+        )
+```
+
+やっていることはめちゃくちゃシンプルで、FireCrawlLoaderのオブジェクトの作成、対象のURLをスクレイピング、Pineconeのベクトルバイトの許容量を超えないようにテキストをスプリットし、最終的にベクトルDBに埋め込みをする。
+
+という使い方をした。
+
+これだけで、自分が指定したURLの内容をベクトルDBに埋め込むことができるようになる。楽すぎる…
+
+その他には、`create_history_aware_retriever()`を使うことで会話履歴を考慮してベクトル検索ができるということも学んだ。
+
+`create_history_aware_retriever`を使うことで、chat_historyを考慮した上でクエリを作成し、それに関連するコンテキストをベクトルDBから探してくれるというもの。
+
+例えば会話の中で、システムプロンプトについて質問をしていたとする。
+
+その後の会話で、「それの具体例を教えて」と投げる。chat_historyを考慮しているので、embeddingsモデルがベクトル検索する時に『**それ？それってなんや、、、あ、システムプロンプトのことね。やから質問文は「システムプロンプトの具体例を教えて」やな。**』というふうに考えてベクトル検索をしてくれるようになるのだ。
+
+これも実装はめちゃくちゃ簡単。以下のように実装する。
+
+```python
+    retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
+    stuff_documents_chain = create_stuff_documents_chain(
+        chat, retrieval_qa_chat_prompt
+    )
+
+    rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
+    history_aware_retriever = create_history_aware_retriever(
+        llm=chat, retriever=docsearch.as_retriever(), prompt=rephrase_prompt
+    )
+
+    qa = create_retrieval_chain(
+        retriever=history_aware_retriever, combine_docs_chain=stuff_documents_chain
+    )
+
+    result = qa.invoke(input={"input": query, "chat_history": chat_history})
+```
+
+重要なのはrephrase_promptとhistory_aware_retrieverである。
+
+rephrase_promptは会話履歴を考慮した上でシンプルな質問をembeddinggsモデルに投げかけるためのプロンプト。
+
+`create_retrieval_chain`のretrieverとして`history_aware_retriever`を設定することで、LLMがchat_historyを考慮した上でベクトル検索を行ってくれるようになる。
