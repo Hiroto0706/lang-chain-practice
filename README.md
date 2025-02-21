@@ -2066,7 +2066,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   そのため、極端にトークンサイズを小さくするとそのトークンは意味を全く持たないためコンテキストとしての役割がない意味のないものになる。チャンクを極端に小さくすることは避けるようにしよう。
 
-  そして、コンテキストとして送られるのは大体 4~5 個である。そのため、チャンクサイズは 2000 とかにしておくと 2000/4=500 となる。500 トークンあればある程度の意味を持つ文章になるし、無駄な情報もあまり入り込まないので適切なチャンクサイズであると言える。
+  そして、コンテキストとして送られるのは大体 4~5 個である。仮に 2000 トークンのコンテキストを確保しているとすると、 2000/4=500 となる。500 トークンあればある程度の意味を持つ文章になるし、無駄な情報もあまり入り込まないのでこの場合は適切なチャンクサイズであると言える。
 
   ちなみに、簡潔な答えが求められるようなケースにおいてはチャンクサイズは長すぎない方がいい。長スチルチャンクは養鶏な情報も含めてしまい、それが LLM にとってノイズとなり最終的なレスポンスに悪影響をもたらすからである。
 
@@ -2076,24 +2076,876 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   <details>
   <summary>添削</summary>
-  はい、上記の理解は正しいです！
+  はい、あなたの理解は正しいです！
 
-  **ポイントのまとめ:**
+  **補足ポイント:**
 
   - **チャンク単位での保存と取得:**  
-    テキストをチャンクに分割してベクトルDBに保存するため、RAGでコンテキストを取得する際は、チャンク単位で情報が渡されます。
+    テキストはチャンクに分割され、そのチャンク単位でベクトル DB に保存され、RAG でコンテキストとして取得されます。
 
   - **チャンクサイズが小さすぎると:**  
-    意味をなさない断片になってしまい、コンテキストとして役に立たなくなるため、極端に小さいサイズは避けるべきです。
+    トークンが短すぎると、意味を持たず、役割を果たさないため、あまり効果的なコンテキストになりません。
 
   - **適切なチャンクサイズの設定:**  
-    例えば、全体で2000トークンあるテキストを4～5個のチャンクに分割すると、各チャンクが約500トークンとなり、意味のある情報を保持しつつ無駄な情報を抑えられます。
+    例えば、全体で 2000 トークンのコンテキストが利用できる場合、4〜5 個のチャンクに分けると 1 チャンクあたり約 500 トークンとなり、十分な意味を保持できる適切なサイズと言えます。
 
-  - **ユースケースに応じた調整:**  
-    簡潔な回答が求められる場合は、チャンクサイズを短くして重要な情報だけを抽出するのが効果的です。一方、詳細な背景情報が必要な場合は、やや大きめのチャンクサイズが有効となります。
+  - **ユースケースに応じた調整:**
+    - 詳細な背景情報が必要な場合は、比較的大きなチャンクが有効。
+    - 簡潔な答えが求められる場合は、チャンクサイズを短くして、不要な情報が含まれないようにするのが望ましい。
 
-  以上の点から、チャンクサイズとオーバーラップの設定は、LLMの応答品質に大きな影響を与えるため、ユースケースに合わせた適切なバランスが重要です。
+  まとめると、チャンクサイズは情報の豊かさと簡潔さのバランスを調整するための重要なパラメータであり、ユースケースに応じて使い分ける必要があります。
   </details>
+
+- **RAG に関して勘違いしていたのでメモメモ**
+
+  RAG（Retrieval Augumented Generation）を前まで LangChain の RAG に関する関数を使って LLM の実行プロセスの中で外部のデータソースにアクセスして、そこからコンテキストを取得して、プロンプトのコンテキストに渡すことを指すのだと思っていたけど、実際そうではないらしい。
+
+  実際は、RAG とは外部の情報源からデータを取得し、それをコンテキストとして用いるプロセス全体のことを指す。
+
+  会社で開発している LLM プロジェクトでは「タスクジェネレーター」「SQL ビルダー」「アナライザー」という 3 つの LLM が登場する。この SQL ビルダーは直接 DB を見に行くわけではなく、プロンプトにて定義された few shot の SQL を用いてユーザーが必要とする情報を取得できそうな SQL を作成するという役割をになっている。
+
+  「これは RAG じゃないのでは？」と思っていたのだが、これも立派な RAG なのである。
+
+  なぜなら RAG とは外部の情報源からデータを取得してコンテキストに渡すというプロセスそのものを指すから。SQL ビルダーを介して、外部の情報源にアクセスして必要なコンテキストを取得することはできているので、これも立派な RAG なのである。知れてよかった。
+
+  <details>
+  <summary>添削</summary>
+  はい、その理解は正しいです！
+
+  **補足説明:**
+
+  - **RAG の定義:**  
+    RAG（Retrieval Augmented Generation）は、外部の情報源からデータを取得し、そのデータを LLM の生成プロセスに組み込む全体のプロセスを指します。必ずしも LangChain の専用関数を使う必要はなく、どのような方法で外部情報を取り込むかは問われません。
+
+  - **あなたのプロジェクトの場合:**
+    - **タスクジェネレーター、SQL ビルダー、アナライザーの役割:**  
+      SQL ビルダーは、直接データベースを参照するのではなく、定義された few-shot の SQL プロンプトを用いて、ユーザーの要求に応じた SQL 文を生成し、その結果を取得しています。
+    - **RAG としてのプロセス:**  
+      この方法でも、外部データベース（PostgreSQL）から必要な情報を取得し、その情報を LLM のコンテキストとして利用しているので、RAG の本質である「外部情報の取得とその利用」が実現されています。
+
+  つまり、SQL ビルダーを介して外部の情報源からデータを取り出し、それをコンテキストに組み込むプロセスも、立派な RAG に該当します。
+  </details>
+
+- **上記の続き**
+
+  ここで疑問になってくるのが、「じゃあなんで PostgreSQL から関連するデータを取得する」という処理を chain の中に含めないのか？含めた方が楽じゃない？というもの。
+
+  調べてみた感じ。それ自体はできそう。
+  以下の記事を参考にすると、
+
+  https://zenn.dev/team_nishika/articles/481ecd7f48b8be
+
+  このような記述がある。
+
+  ```python
+  def answer(self, query: str) -> Dict:
+          """
+          質問に対する回答を返す
+          Args:
+              query (str): 質問
+          Returns:
+              Dict: 回答
+          """
+          output_parser = StrOutputParser()
+          model = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0)
+          prompt = ChatPromptTemplate.from_template(
+              """
+              以下のcontextだけに基づいて回答してください。
+              {context}
+
+              質問:
+              {question}
+              """
+          )
+
+          rag_chain_from_docs = RunnablePassthrough() | prompt | model | output_parser
+
+          rag_chain_with_source = RunnableParallel(
+              {"context": self.vector_store.as_retriever(search_kwargs={"k": 3}), "question": RunnablePassthrough()}
+          ).assign(answer=rag_chain_from_docs)
+          return rag_chain_with_source.invoke(query)
+  ```
+
+  クラスメソッドの中にごりごりに`vector_stre.as_retriever()`という記述があるのだ。
+  そして、この vector_store は PostgreSQL を用いて実装している。（以下参照）
+
+  ```python
+  def initialize_vector_store(self):
+      """
+      ベクトルストアの初期化
+      Returns:
+          PGVector: ベクトルストア
+      """
+      embedding = OpenAIEmbeddings(model="text-embedding-3-small")
+      documents = [Document(page_content=text) for text in self.df["text"].to_list()]
+      # PostgreSQLにベクトルストアを作成
+      return PGVector.from_documents(
+          collection_name=self.COLLECTION_NAME,
+          connection_string=self.con_str,
+          embedding=embedding,
+          documents=documents,
+          pre_delete_collection=True,  # 既存のコレクションを削除し、毎回作り直す
+      )
+  ```
+
+  pv_vector を使えば PosgreSQL をベクトル DB として扱うことができ、それを`as_retriver()`で embeddings がリトリーブするための対象として引数に渡せば、postgres を使った RAG を実装することができる！
+
+- **RAG で使うときに意識しておくといいこと**
+
+  RAG を使うときに考えておくといいことをまとめる。
+
+  それは、RAG を使って取得するデータが構造化データなのか非構造化データなのかどうかということ。
+  取得したいデータが構造化データの場合は TextToSQL といって、テキストから必要なデータを取得するための SQL を生成してもらい、それを元に必要なデータを取得するというアプローチ。
+
+  一方で非構造化データの場合は embeddings モデルを使った意味的推論による RAG が適している。
+
+  このように取得するデータが何かによって RAG 実装のアプローチは変わってくるということを覚えておこう。
+
+  ちなみに、ここでいう非構造化データとはレビューや記事、メモといった SQL では表現することが難しいようなデータ構造のことを指す。
+
+- **ChatOpenAI()の verbose ってなんだ？**
+
+  ChatOpenAI インスタンスを作成する時、verbose という引数がある。
+
+  ![alt text](images/image_4.jpg)
+
+  これは日本語で冗長という意味。これが True になっていると LLM の思考プロセスをコンソールに書き出してくれるようになる。
+
+- **invoke()の結果のキーを変更したい時**
+
+  これかなーりシンプルだけどいいなと思ったのでメモ。
+
+  invoke メソッドの resuponse のキーは固定されている。
+
+  ```
+  {
+    "input": "",
+    "answer": "",
+    "context: "",
+  }
+  ```
+
+  このようになっている。
+  ちょっと嫌だな〜と思う場合はシンプルだが、以下のようにしてみると良い。
+
+  ```python
+    result = qa.invoke(input={"input": query})
+    new_result = {
+        "query": result["input"],
+        "result": result["answer"],
+        "source_documents": result["context"]
+    }
+    return new_result
+  ```
+
+  これはかなりシンプルだけど、「たしかにいいな」と思ったのでメモ。
+
+  ![alt text](images/image_5.png)
+
+  デバッグしてみたら確かに値が変わっている。いいね。
+
+- **Streamlit を使って爆速でリッチ UI な LLM アプリを作る方法**
+
+  詳しくは[こちら](https://monta-database.notion.site/Streamlit-19fcca65093280daa6fac42f46ac2d4a?pvs=4)をチェック！
+
+  ちなみに streamlist では組み込みの UI 表示の関数がある。
+  例えば、`st.chat_message("user").write("Hello World")`のようにすると、以下のようにリッチな UI のメッセージが表示されるようになる。
+
+  ![alt text](images/image_6.png)
+
+  さらに詳しく知りたい場合は[こちら](https://docs.streamlit.io/develop/api-reference/chat/st.chat_message)のドキュメントを参考にどうぞ
+
+- **Streamlist の session_satate について**
+
+  session_state を使うことで、要は会話履歴の保持ができるようになる。
+
+  以下の記事がめちゃくちゃ参考になった。
+
+  https://qiita.com/kuriyan1204/items/d8342f3a40c6aeb57e5e
+
+  ```python
+  import streamlit as st
+
+  st.title('Counter Example')
+  count = 0
+
+  increment = st.button('Increment')
+  if increment:
+      count += 1
+
+  st.write('Count = ', count)
+  ```
+
+  このように streamlit を実行し、increment を実行しようとしても、ボタンを押した時に streamlit 側では初期化をしてしまうらしく、その結果`0 + 1 = 1`が繰り返され、１が表示されるだけになってしまう。
+
+  このような問題を解決するのが Streamlist の sesion_state である。
+
+  以下のように`st.session_state.count`を追加することで、値を保持してくれるようになるのだ。まぁ、session_state を使えば変数みたいに値を保持できますよっていうことだね。
+
+  ```python
+  import streamlit as st
+
+  st.title('Counter Example')
+  if 'count' not in st.session_state:
+    st.session_state.count = 0 #countがsession_stateに追加されていない場合，0で初期化
+
+  increment = st.button('Increment')
+  if increment:
+      st.session_state.count += 1 #値の更新
+
+  st.write('Count = ' + str(st.session_state.count))
+  ```
+
+- **create_history_aware_retriever()を使って会話履歴を考慮してベクトル検索しよう！**
+
+  `create_history_aware_retriever()`を使うと、会話履歴を考慮してベクトル検索を行うことができる。
+  具体的には以下のステップで行う。
+
+  (1) **rephrase のためのプロンプトテンプレートを作成する**:
+
+  リフレーズのためのプロンプトテンプレートを作成することから始めよう。
+
+  ```python
+  rephrase_prompt = hub.pull("langchain-ai/chat-langchain-rephrase")
+  ```
+
+  今回のチュートリアルでは上記のプロンプトを pull して使っていた。具体的な内容は以下の通り。
+
+  ```
+  Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.
+
+  Chat History:
+  {chat_history}
+  Follow Up Input: {input}
+  Standalone Question:
+  ```
+
+  要は会話履歴を考慮して新しい質問を作成してくださいってこと。
+
+  (2) **create_history_aware_retriever()を使って会話履歴を考慮してベクトル検索するためのリトリーバーを作成する**:
+
+  やり方はめちゃくちゃ簡単。以下のように create_history_aware_retriever()を呼び出し、引数に llm, retriever, prompt を渡すだけ。
+
+  ```python
+    history_aware_retriever = create_history_aware_retriever(
+        llm=chat, retriever=docsearch.as_retriever(), prompt=rephrase_prompt
+    )
+  ```
+
+  こうすることで以下のようなチェーンを作成してくれるようになる。
+
+  ```python
+  # If chat history, then we pass inputs to LLM chain, then to retriever
+  chain = prompt | llm | StrOutputParser() | retriever,
+  ```
+
+  (3) **create_retireval_chain()の引数の retriever として(2)のレスポンスを渡す**:
+
+  `create_retrival_chain()`は RAG を実行するためのチェーンを作成してくれる関数である。その関数の retirever 引数に(2)で作成した retriever を渡すことで、会話履歴を考慮したベクトル検索ができるようになるのだ。
+
+  ```python
+    qa = create_retrieval_chain(
+        # ↓これ
+        retriever=history_aware_retriever, combine_docs_chain=stuff_documents_chain
+    )
+  ```
+
+  (4) **invoke()の引数に会話履歴を含める**:
+
+  ```python
+    result = qa.invoke(input={"input": query, "chat_history": chat_history})
+  ```
+
+  上記のように invoke()の引数に chat_history を含める。この chat_history は"langchain-ai/chat-langchain-rephrase"のシステムプロンプトの変数として chat_history が含まれているから。
+
+  実際に動かしてみる。
+
+  まず初めに System Prompt について質問する。その後、具体例を教えてくださいと質問するとしっかりと System Prompt の具体例が返ってきていることがわかる。
+
+  ![alt text](images/image_7.png)
+
+  LangSmith の実行結果を見てみると、以下のようにシステムプロンプトの中にしっかりと chat_history が含まれていることがわかる。
+
+  ```
+  {
+    "output": {
+      "text": "Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question.\n\nChat History:\n[('human', 'System Promptってなんですか？詳細に教えてください！'), ('ai', 'System Promptは、プロンプトテンプレートの一種で、特にシステムメッセージを生成するために使用されます。プロンプトテンプレートは、AIモデルに入力するためのテキストを構築するためのテンプレートであり、さまざまなメッセージタイプに対応しています。SystemMessagePromptTemplateは、システムからの指示や情報を伝えるためのメッセージを作成する際に利用されます。\\n\\nこのテンプレートは、AIモデルが特定のタスクを実行する際に必要な背景情報や指示を提供するために使用されることが多いです。たとえば、ユーザーからの入力に基づいてAIがどのように応答すべきかをガイドするための情報を含めることができます。\\n\\nプロンプトテンプレートは、複数のコンポーネントやプロンプト値から構成されることが多く、これにより柔軟にプロンプトを構築し、AIモデルに適切な入力を提供することが可能になります。')]\nFollow Up Input: 具体例を教えてもらえますか？\nStandalone Question:",
+      "type": "StringPromptValue"
+    }
+  }
+  ```
+
+  さらにこのコンテキストを考慮して llm は以下の質問を生成する。
+
+  ```
+  {
+    "output": "System Promptの具体例を教えてもらえますか？"
+  }
+  ```
+
+  会話履歴を考慮して、「あ、この人が言っている具体例っていうのは、System Prompt のことだな」と AI が返している。
+
+- **firecrawl を使ったベクトル DB の作成がめちゃくちゃ便利**:
+
+  [firecrawl](https://www.firecrawl.dev/)を使えばベクトル DB の作成がめちゃくちゃ楽になる。
+
+  firecrawl は与えられた URL のサイトをクロールし、その情報をマークダウンや JSON 形式でまとめてくれるというサービス。
+
+  また、firecrawl は LangChain のドキュメントローダーにも含まれている。
+
+  https://python.langchain.com/v0.2/docs/integrations/document_loaders/firecrawl/
+
+  そのため、以下のようにコードを書くことで、好きな URL をクロールし、embeddings モデルを使ってベクトル DB にぶち込むことができるのだ。便利すぎる…
+
+  ```python
+    from langchain_community.document_loaders import FireCrawlLoader
+
+    langchain_documents_base_urls = [
+        # URL List
+    ]
+
+    for url in langchain_documents_base_urls:
+        print(f"FireCrawling {url=}")
+
+        loader = FireCrawlLoader(
+            url=url,
+            mode="scrape",
+        )
+
+        raw_docs = loader.load()
+
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=600, chunk_overlap=50
+        )
+        documents = text_splitter.split_documents(raw_docs)
+
+        PineconeVectorStore.from_documents(
+            documents, embeddings, index_name="firecrawl-index"
+        )
+
+        print(f"**** Loading {url}* to vectorestore done ****")
+  ```
+
+  個人的に衝撃的だったのが langchain のドキュメントローダーに firecrawl が含まれていること。URL と mode を指定するだけで、よしなにその URL の情報を取得し、テキストスプリッターやら embeddings やらに渡せるのが便利すぎる。
+
+  ※これは余談だが、本のメモなどをテキストスプリットする場合はchunk_sizeは大きくした方が良い。600とかだとあまり多くの情報を含まないためだ。また、マークダウンで書かれてあるようなサイトだとテキスト以外の情報が多いので600とかだと全く重要な情報はチャンクに含まれない。
+
+- **テキストスプリッターって重要やったんやって話**
+
+  埋め込みの開発をしている時に、以下のようなエラーに出会した。
+
+  ```python
+  HTTP response body: {"code":3,"message":"Metadata size is 42177 bytes, which exceeds the limit of 40960 bytes per vector","details":[]}
+
+  # HTTP 応答本文: {"code":3,"message":"メタデータのサイズは 42177 バイトで、ベクトルあたり 40960 バイトの制限を超えています","details":[]}
+  ```
+
+  要はPineconeが許容しているベクトルデータのバイト数は40960バイトなのに対して、埋め込もうとしているベクトルデータがそれを超えているからエラーになっていたのだ。
+
+  ちなみに、この問題はテキストスプリッターを使うことで解決する。
+
+  それはなぜかを解説する。感覚的には『ドキュメントの長さがは変わっていないので、バイト数は変わらないんじゃ？』と思うかもしれない。
+
+  しかし、実際にはテキストスプリットをすることでベクトルデータのバイト数は減るのだ。
+  その理由はメタデータの数が減るからである。
+
+  単純に長いドキュメントを埋め込もうとすると、メタデータの量も膨大になり、結果として上限を超えてしまうのだ。ちなみにメタデータにはURLやタイトルなど多くの情報が含まれる。
+
+  <details>
+  <summary>確かにメタデータがたくさんあることがわかる</summary>
+  output:
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: a53e05e3-eac0-499f-befa-7585aac77a9b
+        sourceURL: https://monta-database.notion.site/188a9974e2aa4e21b7892f39083569a9
+        statusCode: 200
+        title: 運動脳
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/188a9974e2aa4e21b7892f39083569a9
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        # 運動脳
+
+        ステータス
+
+        読了
+
+        カテゴリー
+
+        ![🏃‍♀️](<Base64-Image-Removed>)運動、健康
+
+        著者名
+
+        アンデシュ・ハンセン
+
+        点数
+
+        10
+
+        作成日時
+
+        2022/11/02
+
+        最終更新日時
+
+        2025/02/20
+
+        キーワード
+
+        脳科学
+
+        HIIT
+
+        ランニング
+
+        2 more properties
+
+        ## なぜこの本を読むのか
+
+        運動習慣を継続させたいから
+
+        運動の効果をより詳しく知りたいから
+
+        運動することで、海馬や領域同士のつながりが強化される。海馬が大きいと記憶力などが向上する。領域同士のつながりが強化されると頭の回転が速くなる。引き出しのスピードが上がる。といった頭が良くなるには必要な効果がある。
+
+        運動をすることで集中力が高まる理由を理解したい
+
+        海馬や前頭葉が強化されるから。前頭葉は人間らしい思考をするには必要な部位で、思考力や計画力などを強化する。海馬は記憶力関係する部位。前頭葉が成長することで集中力が強化される。
+
+        運動脳について詳しく理解したい
+
+        運動と集中力、健康などとの関係を知りたい
+
+        ## メモ
+
+        ### はじめに
+
+        運動の効果
+
+        集中力、記憶力、ストレス対策、創造性に効果がある
+
+        思考の速度が上がる
+
+        情報を早く抜き出すことができる
+
+        脳トレは効果が薄い
+
+        脳トレは効果が薄い
+
+        それよりも戦略的に運動する方が効果的である
+
+        ### 現代人は原始人と変わらない
+
+        人間は原始人と現代人でもたいして変わらない
+
+        進化するためには100年や1万2000年レベルでは短すぎる
+
+        もっと膨大な時間が必要になる
+
+        つまり、人間の脳は1万2000年前と大して変わっていない
+
+        しかし、人間の生活習慣は大きく変化した
+
+        ウォーキングの効果えぐい
+
+        ウォーキングを1年続けた人は、側頭葉と前頭葉のつながりが強くなる
+
+        この部位は老化の影響を強く受ける部位
+
+        ここが改善されていると言うことは、老化に対してウォーキングが効果的だということ
+
+        そのほかにも、実行制御という認知機能の向上が見られた
+
+        自発的に行動する
+
+        計画を立てる
+
+        注意力を制御する
+
+        ウォーキングは脳機能を向上させ、老化も防ぐことがわかった
+
+        機能的に優れた脳の条件
+
+        機能的に優れた脳とは、脳の大きさでもシワの数、細胞の数ではない
+
+        機能的に優れた脳とは、各領域（前頭葉や頭頂葉など）同士の連携が優れている脳のことである
+
+        さらに、その連携を強化する効果が運動にはあることまでわかっている
+
+        GABA
+
+        GABAとは、脳が変化しないようにブレーキの役割を担うアミノ酸である
+
+        しかし、GABAは運動をすることで取り除かれ、その効果が薄まることがわかっている
+
+        つまり、運動習慣があれば脳はより柔軟になるというわけである
+
+        悪い効果だけでなく、GABAはストレスを抑える効果もあることを理解しておこう
+
+        ### 脳からストレスを取り払う
+
+        扁桃体の機能
+
+        扁桃体は人間以外の動物にもある部位である
+
+        つまり種の存続に必要不可欠な役割があるということ
+
+        扁桃体の役割は、警報システムのようなもの
+
+        また、扁桃体はストレスに反応する
+
+        つまりストレスがストレスを生む悪循環を生み出すものなのである
+
+        扁桃体がないとどうなるか
+
+        海馬の機能
+
+        海馬は記憶を司るだけでなく、ストレスのブレーキの役割もある
+
+        海馬の役割
+
+        海馬の細胞は、過度なコルチゾールにさらされると死んでしまう
+
+        つまり、ストレスが溜まりやすい環境に身を置くと海馬が萎縮してしまうのである
+
+        DaigoがよくいうストレスによってIQが下がるっていうのもこれに関係あるのかっ！
+
+        運動とストレス
+
+        運動することはある種のストレスにさらされるわけである
+
+        しかし、定期的な運動を続けていると、運動中のコルチゾール分泌量は減っていく
+
+        そうすると、運動以外のことでも分泌されるストレス量が減少することがわかっている
+
+        つまり運動自体がストレス予防になるということである
+
+        海馬だけでなく、前頭葉（主に思考するのに使う領域）も同じくストレスと抑制する機能がある
+
+        心配性の人は前頭葉が萎縮している
+
+        前頭葉が小さいと、扁桃体の分泌するコルチゾールを抑える機能がないからである
+
+        前頭葉
+
+        前頭葉は長期の運動によって成長することがわかっている
+
+        運動を長期的に行なっている人は、前頭葉が物理的に成長していることがわかった
+
+        運動によって筋肉だけでなく、脳も鍛えることができるということである
+
+        前頭葉の前部にある前頭前皮質は、脳の指令等のような役割がある
+
+        抽象的思考、数学的思考といった人間が唯一できる思考を司る部位でもある
+
+        子供がイライラしやすいのは仕方がない！？
+
+        脳の機能が発達する時間はバラバラである
+
+        例えば、扁桃体が完成するのは17歳の時
+
+        一方で、前頭葉は25歳ほどだと言われている
+
+        つまり、扁桃体というストレスを司る部位が完成するのに対して、前頭葉というストレスを抑える部位が未発達のためなのである（子供の感情が激しいのは仕方のないこと…！）
+
+        ウォーキングかランニングか
+
+        結論から言うと、ランニングのほうが効果的である
+
+        ランニングをすることで、ストレスがかかり脳は臨戦体制に入る
+
+        しかし、その後ドーパミンやエンドルフィンといった物質が分泌され、脳は快楽を覚える
+
+        これが継続されると脳は「ストレスがかかる＝快楽を感じること」と感じるようになる
+
+        ちなみにウォーキングではこの効果は見られなかったらしい
+
+        結果としてストレス耐性にもつながると言うわけである
+
+        ### 集中力を高める
+
+        選択的注意
+
+        ウォーキングを継続的に続けた人は、選択的注意力が高まることがわかった
+
+        前頭葉や頭頂葉などが活性化している人は、選択的注意力が高い
+
+        理由としては、ウォーキングをしたことで、前頭葉の細胞同士のつながりが増えたからであると考えられている
+
+        情報が多く扱いきれなくなった時に、前頭葉にギアを入れるように集中できるようになったと言うわけである
+
+        運動することで、周囲の環境に対する注意力が高まる
+
+        側坐核
+
+        側坐核は報酬中枢と言われる部位である
+
+        側坐核から報酬をもらうと、人間は心地よい気分になる
+
+        側坐核は運動や性行為などをすることで、ドーパミンを分泌する
+
+        人間が性行為、食事、社会交流、運動をすることでドーパミンが分泌されるのは、種としての生存確率が上がるためである
+
+        原始人がこういった行動をしてきた結果、脳はこの行動を促すことで生き残ろうとするようになった
+
+        ADHDの人は、ドーパミンの受容体が少ないため、多くの人が快感を得るものから快感を得ることができず、結果として注意力が散漫になる
+
+        意識の正体
+
+        意識とは、視覚や聴覚などの知覚が前頭葉や頭頂葉と連携した結果であると考えられている
+
+        視床という脳の情報の中継地点のようなものがある
+
+        ここは全ての領域の情報が集まる場所である
+
+        このあつまりが意識を生成していると言われている
+
+        ここで情報の取捨選択をおこなっており、必要な情報かどうかのふるいにかけられる
+
+        集中力は鍛えることができる
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        #### 仕事、運動、勉強全てでプラスになる
+
+        睡眠は全てにおいて重要である。
+
+        睡眠不足の状態はアルコールを飲んだ状態と同じくらい、認知能力に影響をたえる。
+
+        仕事においても寝不足だと悪い結果になりかねない。
+
+        仕事では人の話に耳を傾け、重要なことを選択し集中する必要があり、正しく優先順位をつける必要がある。
+
+        寝不足だとそのような能力に対して大きな悪影響がある。
+
+        寝不足の状態だと前頭葉の良心の阿責を感じにくくなり、大雑把な行動、衝動的な行動、無責任な行動をしやすくなるという研究結果もある。
+
+        寝不足だと衝動的になりやすいのだ。
+
+        仕事でもパフォーマンスを発揮するために、睡眠は非常に大切。何よりも睡眠を重要視するべきである。
+
+        ![🐶](<Base64-Image-Removed>)
+
+        前頭葉
+
+        ### 第7章　眠って感情脳を整える
+
+        #### 徹夜によって扁桃体が過剰反応する
+
+        レム睡眠の時、我々は扁桃体が活発になっている。
+
+        扁桃体はストレスを感じ、注意を促したり、アドレナリンの放出を促したりといった役割を持つ。
+
+        その扁桃体からさまざまな感情と結びついた記憶が呼び起こされる。（お母さんから怒られた記憶とか！）
+
+        そして、レム睡眠にはそれらの呼び起こされた記憶から感情的な部分を取り除き、理性的なレベルに切り落としていく役割もある！
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        #### 第4ステージ：外見で夢を見ているかどうかわかる
+
+        レム睡眠時は閉じられた瞼の下で眼球が素早く活動しているかどうかでわかる。
+
+        レム睡眠は英語にすると、Rapid Eye Movementである。この頭文字をとってREM睡眠なのである。
+
+        レム睡眠時はランダムに記憶を思い出す。
+
+        レム睡眠時は脳は覚醒時と同じくらい活発に動いている。レム睡眠の初め、脳の深部から視床を経由し、大脳皮質に脳波が送られる。
+
+        これにより、大脳皮質のことなる領域の活動を促す。この時にさまざまな記憶が呼び起こされる。
+
+        海馬は記憶を司る領域だが、レム睡眠の間は海馬はどの記憶を活性化させるかといった指揮権を持たない。そのため、レム睡眠時はランダムに記憶を呼び起こしてしまい、それが夢となる。
+
+        感情を呼び起こしたもの、日中処理しきれなかった記憶などが活性化される。
+
+        ![🐶](<Base64-Image-Removed>)
+
+        睡眠紡錘波
+
+        ![🐶](<Base64-Image-Removed>)
+
+        ソマトロピン
+
+        ![🐶](<Base64-Image-Removed>)
+
+        シナプス
+
+        ### 第3章　体内時計を完全に味方にする
+
+        #### 視交叉上核
+
+        視交叉上核はマスタークロックとも呼ばれる。マスタークロックは、左右の視神経が交わるちょうど上に位置する。
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        [短期記憶が長期記憶となるプロセス](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#27503e40c024430d87fd39ec12bbf0d7)
+
+        [何度もやったことを脳は優先して覚える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#90d95dbb1c124f4b91360e1a868ff189)
+
+        [仕事、運動、勉強全てでプラスになる](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#24d1df69dc1c4c46992e5b455e6ce7a6)
+
+        [第7章　眠って感情脳を整える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#6060a4a5ebf3423ba9ab7ddb9cb74849)
+      type: Document
+    lc: 1
+    type: constructor
+  </details>
+
+  このようにドキュメントの中には大量のメタデータがあることがわかる。
+  このメタデータの量が多すぎて許容できるバイト数を超えてしまっていたのだ。
+
+  ドキュメントの量が多すぎるとそれを表現するためにより多くのバイト数が必要なことからもこれは感覚的にわかること。
+
+  なので直接埋め込もうとすると、エラーになるので長いドキュメントの時はテキストを分割して埋め込むようにしようねということだ。勉強になりました。
 
 ### ChatGPT による解説
 
@@ -2172,4 +3024,423 @@ LangChainのtext_splitterでは、**chunk_size** と **chunk_overlap** のパラ
 
 </details>
 
+<details>
+<summary>RAGとは？</summary>
+RAG（Retrieval Augmented Generation）とは、**外部の情報源から関連するコンテキストを取得し、それをLLM（大規模言語モデル）の生成プロセスに組み込むことで、より正確かつ詳細な回答を生み出す仕組み**です。つまり、LLM単体では内部知識に頼って応答を生成するのに対し、RAGは外部データをリアルタイムに取り込むことで、最新情報や専門知識などを補完しながら応答を生成します。
+
+以下、具体例を交えて詳しく説明します。
+
+---
+
+### 1. RAG の基本プロセス
+
+1. **ユーザーのクエリ受け取り**  
+   ユーザーからの質問やリクエストを受け取ります。
+
+2. **外部データから関連情報の取得**
+
+   - **ベクトルストア（例：FAISS）**
+     - テキストデータを事前にチャンクに分割し、各チャンクを埋め込み（embedding）に変換して FAISS に格納します。
+     - ユーザーのクエリを埋め込み化し、FAISS 上で類似性検索を実施。
+     - 最も関連性の高いチャンクを取得します。
+   - **リレーショナルデータベース（例：PostgreSQL）**
+     - LLM に SQL 生成用のプロンプトを渡し、クエリに対応する関連情報を取得する SQL を生成。
+     - Python コードでその SQL を実行し、PostgreSQL から必要なデータを抽出します。
+
+3. **取得した情報を LLM のコンテキストに統合**  
+   取得した情報（コンテキスト）を LLM に渡して、元の質問に対する回答生成を強化します。
+
+4. **LLM による回答生成**  
+   コンテキスト付きで LLM が応答を生成し、最終的な回答がユーザーに提供されます。
+
+---
+
+### 2. 具体例
+
+#### 具体例 1: FAISS を用いた RAG
+
+- **シナリオ:** ニュース記事から最新の経済情報を取得して回答を生成する
+- **プロセス:**
+  1. **準備:** 膨大なニュース記事を事前にテキストチャンクに分割し、各チャンクを BERT や OpenAI の埋め込みモデルでベクトル化。これらのベクトルを FAISS に格納します。
+  2. **クエリ処理:** ユーザーが「最新の経済動向はどうなっている？」と質問。
+  3. **検索:** 質問を埋め込み化し、FAISS で類似性検索を実施。最も関連性の高い複数のチャンク（例：4〜5 個）を取得します。
+  4. **生成:** 取得したチャンクを LLM の入力コンテキストとして付加し、回答生成を実施。
+  5. **結果:** 最新の経済情報を反映した、詳細かつ具体的な回答が得られます。
+
+#### 具体例 2: PostgreSQL を用いた RAG
+
+- **シナリオ:** 顧客サポートにおいて、FAQ データベースから関連するサポート情報を取得して回答を生成する
+- **プロセス:**
+  1. **プロンプト生成:** ユーザーの問い合わせに基づいて、LLM が適切な SQL クエリを生成するためのプロンプトを作成します。
+  2. **SQL 生成:** LLM が「顧客 ID」や「問い合わせ内容」を元に、関連する FAQ やサポート記事を検索する SQL 文を生成。
+  3. **データ取得:** Python コードを通じて、生成された SQL を PostgreSQL に対して実行。関連するデータを取得します。
+  4. **加工:** OutputParser などで取得データを整形し、再度 LLM に要約や回答生成を依頼します。
+  5. **生成:** 加工された情報を元に、LLM が最終的なサポート回答を生成し、ユーザーに提供されます。
+
+---
+
+### 3. まとめ
+
+- **RAG の定義:**  
+  RAG は、LLM が外部の情報（例：ベクトルストア、リレーショナル DB）から関連情報を動的に取得し、その情報を補完コンテキストとして回答生成に活用するプロセス全体を指します。
+
+- **実装方法の多様性:**  
+  RAG は特定のライブラリに依存せず、FAISS のようなベクトル検索、または PostgreSQL のような従来のデータベースを使っても実現可能です。どちらの場合も、外部情報を取り込むという点で RAG の本質に合致しています。
+
+- **利点:**  
+  最新情報や専門的な知識をリアルタイムに取得できるため、LLM の回答がより正確で信頼性の高いものになります。
+
+以上のように、RAG は外部データを活用して LLM の生成プロセスを強化する手法であり、その実装方法は多岐にわたるものの、基本的な考え方は同じです。これにより、例えばクラウド環境に頼らずとも、ローカル環境で小規模なデータを扱う場合でも RAG を実現できる点が魅力です。
+
+</details>
+
+<details>
+<summary>verbose=Trueってなに？</summary>
+`verbose` 引数は、モデルやチェーンの実行中に詳細なログやデバッグ情報をコンソールに出力するかどうかを制御するためのものです。  
+具体例を使って説明します。
+
+---
+
+### 例 1: verbose=True の場合
+
+```python
+from langchain.chat_models import ChatOpenAI
+
+# verbose を True に設定してインスタンスを作成
+chat_verbose = ChatOpenAI(verbose=True, temperature=0)
+
+# モデルに問い合わせを実行すると、内部処理の詳細が表示される
+response = chat_verbose("こんにちは、今日の天気はどうですか？")
+print(response)
+```
+
+この場合、`chat_verbose` を使って質問すると、実行中に以下のような情報がコンソールに表示される可能性があります：
+
+- **リクエスト内容**：どんなプロンプトが送られたか
+- **内部ステップ**：API 呼び出し前の前処理や、呼び出し後の後処理の情報
+- **応答情報**：取得した応答の一部など
+
+これにより、どのような流れで処理が進んでいるのか、またエラー発生時にどこで問題が起こっているのかを確認しやすくなります。
+
+---
+
+### 例 2: verbose=False の場合
+
+```python
+from langchain.chat_models import ChatOpenAI
+
+# verbose を False に設定してインスタンスを作成（デフォルト値の場合が多い）
+chat_nonverbose = ChatOpenAI(verbose=False, temperature=0)
+
+# 同じ問い合わせを実行しても、詳細なログは出力されず、応答のみが返る
+response = chat_nonverbose("こんにちは、今日の天気はどうですか？")
+print(response)
+```
+
+この場合、実行中の内部処理の詳細は表示されず、最終的な応答だけが得られます。  
+主に、プロダクション環境やログが不要な場合にはこちらの設定が推奨されます。
+
+---
+
+### verbose を使うメリット・デメリット
+
+- **メリット**
+
+  - **デバッグが容易**：処理の流れや中間結果を確認できるので、エラーが発生した際に原因を特定しやすいです。
+  - **学習目的**：どのようにプロンプトが処理され、どんな結果が返っているのかを理解するのに役立ちます。
+
+- **デメリット**
+  - **出力が多くなる**：大量のログ情報がコンソールに表示されるため、結果が見づらくなる場合があります。
+  - **パフォーマンスの影響**：特に大量のリクエストを処理する場合、ログ出力がわずかですがオーバーヘッドになることもあります。
+
+---
+
 ### まとめ
+
+- **verbose=True**: 内部の処理過程やデバッグ情報を表示するため、学習や開発時に便利です。
+- **verbose=False**: 不要なログ出力を抑え、シンプルに応答だけを得るので、プロダクション環境などで使うのに適しています。
+
+このように、`verbose` の設定により、出力されるログの量や内容が変わるため、用途や開発段階に応じて使い分けることが重要です。
+
+</details>
+
+<details>
+<summary>RAGの使い分けに関して</summary>
+
+以下にまとめます。
+
+---
+
+### 構造化データ vs 非構造化データにおける RAG のアプローチ
+
+#### 1. 構造化データの場合：SQL 生成による Text-to-SQL アプローチ
+
+- **概要:**  
+  構造化データは、テーブルやスキーマで整理されているため、明示的なクエリで必要な情報を正確に抽出することができます。  
+  そのため、LLM に「Text-to-SQL」で SQL を生成させ、データベースから直接情報を取得する方法が合理的です。
+
+- **具体例:**  
+  たとえば、顧客サポートシステムで「特定の顧客 ID の最近の問い合わせ履歴」を取得する場合、
+
+  1. ユーザーが「顧客 123 の問い合わせ履歴を教えて」と問い合わせる。
+  2. LLM がその問い合わせに合わせた SQL（例：`SELECT * FROM inquiries WHERE customer_id = 123 ORDER BY inquiry_date DESC LIMIT 5;`）を生成。
+  3. PostgreSQL で SQL を実行し、問い合わせ履歴を取得。
+  4. 得た情報を LLM に渡して回答を生成する。
+
+  この流れでは、データの構造が明確なため、SQL による精密な抽出が有効です。
+
+---
+
+#### 2. 非構造化データの場合：Embeddings モデルとベクトル DB を使うアプローチ
+
+- **概要:**  
+  非構造化データ（例：記事、レビュー、メモなど）は、直接 SQL で抽出するのが難しい場合があります。  
+  Embeddings モデルはテキストの意味をベクトル化し、その意味的類似性に基づいて情報を検索できるため、FAISS や pgvector といったベクトル DB を利用するのが適しています。
+
+- **具体例:**  
+  例えば、ニュース記事の中から「最新の経済動向」に関する情報を探す場合、
+
+  1. 膨大なニュース記事をあらかじめチャンク（例：500 トークン程度）に分割し、各チャンクを Embeddings モデルでベクトル化してベクトル DB に保存。
+  2. ユーザーが「最新の経済動向はどうなっている？」と質問すると、その質問もベクトル化。
+  3. ベクトル DB（例：FAISS）で、質問と意味的に類似性の高いチャンク（例：上位 4〜5 件）を取得。
+  4. 取得した情報を LLM のコンテキストとして渡し、回答を生成する。
+
+  このプロセスでは、非構造化データの意味的な情報を動的に補完できるため、柔軟かつ効果的な検索が可能になります。
+
+---
+
+### まとめ
+
+- **構造化データの場合:**
+
+  - データは明確に整理されているので、SQL での抽出が効率的。
+  - Text-to-SQL を利用すれば、LLM が適切な SQL を生成し、PostgreSQL などのリレーショナル DB から正確な情報を取得できる。
+
+- **非構造化データの場合:**
+  - データが散らばっていたり、形式が固定されていないため、意味的類似性で情報を検索する必要がある。
+  - Embeddings モデルとベクトル DB を組み合わせることで、ユーザーの質問に対し意味的に一致する情報を柔軟に取得できる。
+
+このように、用途に合わせて RAG のアプローチを使い分けることで、最適な情報取得と LLM による回答生成が実現できます。
+
+</details>
+
+<details>
+<summary>create_history_aware_retrieverについて</summary>
+LangChain の `create_history_aware_retriever` は、従来の単一クエリに基づく検索ではなく、会話の文脈（履歴）を踏まえた情報検索を実現するための仕組みです。これにより、ユーザーとの対話が進む中で出現する曖昧な指示（例えば「彼」や「それ」など）に対しても、過去のやり取りから文脈を補完し、より適切な情報を取得できます。
+
+---
+
+## 1. なぜ会話履歴を考慮する必要があるのか？
+
+例えば、以下のような対話を考えてみます：
+
+- **ユーザー:** 「ビル・ゲイツの最新の本について教えて？」
+- **AI:** 「どの本のことですか？」
+- **ユーザー:** 「彼の内容をもう少し詳しく教えて？」
+
+このとき、単純に「彼の内容」とだけ検索してしまうと、「彼」が誰なのか曖昧になり、適切な情報が取得できない可能性があります。そこで、会話履歴（この例では「ビル・ゲイツの最新の本」）をもとに「彼」を解決する必要があります。
+
+`create_history_aware_retriever` は、こうした会話の流れを踏まえて、クエリを改善し、より文脈に沿った情報検索を可能にします。
+
+---
+
+## 2. 具体例を使った実装例
+
+以下に、簡単な Python コードの例を示します。
+
+### 2.1. 前提となるドキュメント
+
+まず、簡単なデータセットとして、いくつかのドキュメントを用意します。
+
+```python
+from langchain.schema import Document
+
+documents = [
+    Document(page_content="イーロン・マスクは2023年に『X』について語った。"),
+    Document(page_content="ジェフ・ベゾスは2022年に新しい宇宙プロジェクトを発表した。"),
+    Document(page_content="ビル・ゲイツは最新の本『気候変動と未来』を2024年に出版した。"),
+]
+```
+
+### 2.2. 通常の Retriever の問題
+
+通常の Retriever を使うと、次のようなコードになりますが、会話履歴を考慮せずに単一クエリのみで検索を実施します。
+
+```python
+from langchain.vectorstores import FAISS
+from langchain.embeddings import OpenAIEmbeddings
+
+# FAISS ベクトルデータベースを作成
+vectorstore = FAISS.from_documents(documents, OpenAIEmbeddings())
+retriever = vectorstore.as_retriever()
+
+# 単一のクエリで検索
+query = "彼の最新の本について教えて？"
+retrieved_docs = retriever.get_relevant_documents(query)
+
+for doc in retrieved_docs:
+    print(doc.page_content)
+```
+
+この場合、「彼」が誰を指しているのか明確にされていないため、適切な検索結果が得られにくいです。
+
+### 2.3. create_history_aware_retriever を利用する方法
+
+会話履歴を利用して文脈を補完するには、`create_history_aware_retriever` を使います。これにより、過去の対話内容をもとに検索クエリが補完され、より正確な検索が実現します。
+
+```python
+from langchain.chains import ConversationalRetrievalChain
+from langchain.chat_models import ChatOpenAI
+from langchain.memory import ConversationBufferMemory
+from langchain.retrievers import create_history_aware_retriever
+
+# チャットモデルの初期化
+llm = ChatOpenAI(model_name="gpt-4")
+
+# 会話履歴を保存するメモリをセットアップ
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+# 履歴を考慮した Retriever を作成
+history_aware_retriever = create_history_aware_retriever(llm, retriever)
+
+# ConversationalRetrievalChain を利用して対話型のQAチェーンを作成
+qa_chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=history_aware_retriever,
+    memory=memory
+)
+
+# 対話のシミュレーション
+chat_history = []
+
+# ① 最初の質問
+query1 = "ビル・ゲイツの最新の本について教えて？"
+response1 = qa_chain({"question": query1, "chat_history": chat_history})
+chat_history.append((query1, response1["answer"]))
+print("回答1:", response1["answer"])
+
+# ② 続けて質問。ここでは「彼」が先の文脈でビル・ゲイツを指していることが文脈から補完される
+query2 = "彼の内容をもう少し詳しく教えて？"
+response2 = qa_chain({"question": query2, "chat_history": chat_history})
+print("回答2:", response2["answer"])
+```
+
+### 2.4. このコードのポイント
+
+- **会話履歴の保存:**  
+  `ConversationBufferMemory` を使い、過去のやり取りを記録します。これにより、次のクエリが「彼」が誰なのかを履歴から推測できます。
+
+- **履歴を考慮した検索:**  
+  `create_history_aware_retriever` が、現在のクエリだけでなく、過去の対話内容も組み合わせた検索クエリを生成し、適切なドキュメントを取得します。
+
+- **ConversationalRetrievalChain の利用:**  
+  チャットモデル（この例では GPT-4）と履歴考慮型 Retriever を組み合わせることで、自然な対話形式で情報検索が可能となります。
+
+---
+
+## 3. メリット
+
+- **文脈理解の向上:**  
+  単一クエリだけでは捉えきれなかったユーザーの意図を、過去の対話内容を通じて補完できるため、より正確な回答が得られます。
+
+- **自然な対話の実現:**  
+  会話の流れが維持されるため、ユーザーは対話型のシステムと自然にコミュニケーションできます。
+
+- **柔軟な応用:**  
+  FAQ ボットやカスタマーサポート、社内ナレッジベース検索など、文脈を重視する多様な用途に応用できます。
+
+---
+
+## まとめ
+
+`create_history_aware_retriever` は、LangChain において会話の文脈を考慮した情報検索を実現するための強力なツールです。単一のクエリだけでは不十分な場合でも、過去の対話履歴を組み合わせることで、曖昧な表現を解消し、より正確な回答を得ることができます。コード例を通して、その基本的な使い方とメリットが理解できると思います。
+
+</details>
+
+<details>
+<summary>なぜテキストスプリッターが必要なのか？</summary>
+以下は、テキストスプリッターを使う前と使った後でどのようにメタデータのサイズが変わるかを示す具体例です。
+
+---
+
+### 1. テキストスプリッターを使わない場合
+
+例えば、あるウェブページから全文をスクレイピングして、そのままひとつのドキュメントとして扱ったとします。  
+このドキュメントには、長いテキスト（例：HTML の生データや記事全体）が含まれ、そのテキストをそのままメタデータとしても扱う場合を考えます。
+
+```python
+# 長いテキスト（例として単純に 'A' を繰り返した文字列）
+document_text = "A" * 50000  # 50,000文字
+
+# 1件のドキュメントとして作成。メタデータに全文を含めると仮定
+document = {
+    "page_content": document_text,
+    "metadata": {
+        "source": "https://example.com",
+        "full_text": document_text  # メタデータとしても全文を保持している
+    }
+}
+
+# このドキュメントをそのままベクトルDB（例:Pinecone）に投入すると、
+# メタデータサイズが50,000文字分となり、Pineconeの上限40,960バイトを超えてしまう
+```
+
+この場合、ひとつのベクトルに添付されるメタデータが非常に大きいため、先ほどのエラー  
+「Metadata size is 42177 bytes, which exceeds the limit of 40960 bytes per vector」  
+のような問題が発生します。
+
+---
+
+### 2. テキストスプリッターを使った場合
+
+テキストスプリッターを使用すると、長いドキュメントを複数の小さなチャンクに分割します。  
+各チャンクは短いテキストとなるため、メタデータもそのチャンクに対応した分だけとなり、サイズが小さくなります。
+
+```python
+from langchain.text_splitter import CharacterTextSplitter
+
+# 長いテキストは先ほどと同じ
+document_text = "A" * 50000  # 50,000文字
+
+# 文字単位でチャンクに分割する設定（例：1チャンクあたり1000文字、オーバーラップ100文字）
+text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+chunks = text_splitter.split_text(document_text)
+
+# 各チャンクに対して個別のドキュメントを作成
+documents = []
+for i, chunk in enumerate(chunks):
+    doc = {
+        "page_content": chunk,
+        "metadata": {
+            "source": "https://example.com",
+            "chunk_index": i,
+            # ここでは各チャンクの内容のみをメタデータに含めるか、または含めないなど柔軟に対応できる
+        }
+    }
+    documents.append(doc)
+
+# documents の各項目はそれぞれ小さいテキストになっているため、
+# 1つあたりのメタデータサイズが大幅に低くなります。
+# 例えば、1000文字程度なら、40KB（約40,000バイト）以内に収まります。
+```
+
+このように、全体のドキュメントの長さ自体は変わらなくても、  
+**テキストスプリッターで分割することで、ひとつひとつのチャンク（＝ベクトルに対応するデータ）のサイズが小さくなり、Pinecone のメタデータサイズ制限内に収まる** ようになるのです。
+
+---
+
+### 3. まとめ
+
+- **テキストスプリッターを使わない場合：**  
+  長いドキュメントをそのまま投入すると、ひとつのベクトルに大量のメタデータが付いてしまい、サイズ制限を超えてエラーとなる。
+
+- **テキストスプリッターを使う場合：**  
+  長いドキュメントを複数の小さなチャンクに分割することで、各チャンクのメタデータサイズが小さくなり、エラーを回避できる。
+
+このように、テキストスプリッターはドキュメント全体の内容はそのままに、データを小さな単位に分割して取り扱うことで、ベクトル DB 側の制限に対応し、かつ検索や埋め込み生成の精度を向上させる役割を果たしているのです。
+
+</details>
+
+### まとめ
+
+-
