@@ -3519,3 +3519,13 @@ loader = FireCrawlLoader(
 rephrase_promptは会話履歴を考慮した上でシンプルな質問をembeddinggsモデルに投げかけるためのプロンプト。
 
 `create_retrieval_chain`のretrieverとして`history_aware_retriever`を設定することで、LLMがchat_historyを考慮した上でベクトル検索を行ってくれるようになる。
+
+## Slim Code Interpreter
+- ****:
+
+### ChatGPTによる解説
+<details>
+<summary></summary>
+</details>
+
+### まとめ
