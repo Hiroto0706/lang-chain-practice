@@ -2451,6 +2451,500 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   単純に長いドキュメントを埋め込もうとすると、メタデータの量も膨大になり、結果として上限を超えてしまうのだ。ちなみにメタデータにはURLやタイトルなど多くの情報が含まれる。
 
+  <details>
+  <summary>確かにメタデータがたくさんあることがわかる</summary>
+  output:
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: a53e05e3-eac0-499f-befa-7585aac77a9b
+        sourceURL: https://monta-database.notion.site/188a9974e2aa4e21b7892f39083569a9
+        statusCode: 200
+        title: 運動脳
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/188a9974e2aa4e21b7892f39083569a9
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        # 運動脳
+
+        ステータス
+
+        読了
+
+        カテゴリー
+
+        ![🏃‍♀️](<Base64-Image-Removed>)運動、健康
+
+        著者名
+
+        アンデシュ・ハンセン
+
+        点数
+
+        10
+
+        作成日時
+
+        2022/11/02
+
+        最終更新日時
+
+        2025/02/20
+
+        キーワード
+
+        脳科学
+
+        HIIT
+
+        ランニング
+
+        2 more properties
+
+        ## なぜこの本を読むのか
+
+        運動習慣を継続させたいから
+
+        運動の効果をより詳しく知りたいから
+
+        運動することで、海馬や領域同士のつながりが強化される。海馬が大きいと記憶力などが向上する。領域同士のつながりが強化されると頭の回転が速くなる。引き出しのスピードが上がる。といった頭が良くなるには必要な効果がある。
+
+        運動をすることで集中力が高まる理由を理解したい
+
+        海馬や前頭葉が強化されるから。前頭葉は人間らしい思考をするには必要な部位で、思考力や計画力などを強化する。海馬は記憶力関係する部位。前頭葉が成長することで集中力が強化される。
+
+        運動脳について詳しく理解したい
+
+        運動と集中力、健康などとの関係を知りたい
+
+        ## メモ
+
+        ### はじめに
+
+        運動の効果
+
+        集中力、記憶力、ストレス対策、創造性に効果がある
+
+        思考の速度が上がる
+
+        情報を早く抜き出すことができる
+
+        脳トレは効果が薄い
+
+        脳トレは効果が薄い
+
+        それよりも戦略的に運動する方が効果的である
+
+        ### 現代人は原始人と変わらない
+
+        人間は原始人と現代人でもたいして変わらない
+
+        進化するためには100年や1万2000年レベルでは短すぎる
+
+        もっと膨大な時間が必要になる
+
+        つまり、人間の脳は1万2000年前と大して変わっていない
+
+        しかし、人間の生活習慣は大きく変化した
+
+        ウォーキングの効果えぐい
+
+        ウォーキングを1年続けた人は、側頭葉と前頭葉のつながりが強くなる
+
+        この部位は老化の影響を強く受ける部位
+
+        ここが改善されていると言うことは、老化に対してウォーキングが効果的だということ
+
+        そのほかにも、実行制御という認知機能の向上が見られた
+
+        自発的に行動する
+
+        計画を立てる
+
+        注意力を制御する
+
+        ウォーキングは脳機能を向上させ、老化も防ぐことがわかった
+
+        機能的に優れた脳の条件
+
+        機能的に優れた脳とは、脳の大きさでもシワの数、細胞の数ではない
+
+        機能的に優れた脳とは、各領域（前頭葉や頭頂葉など）同士の連携が優れている脳のことである
+
+        さらに、その連携を強化する効果が運動にはあることまでわかっている
+
+        GABA
+
+        GABAとは、脳が変化しないようにブレーキの役割を担うアミノ酸である
+
+        しかし、GABAは運動をすることで取り除かれ、その効果が薄まることがわかっている
+
+        つまり、運動習慣があれば脳はより柔軟になるというわけである
+
+        悪い効果だけでなく、GABAはストレスを抑える効果もあることを理解しておこう
+
+        ### 脳からストレスを取り払う
+
+        扁桃体の機能
+
+        扁桃体は人間以外の動物にもある部位である
+
+        つまり種の存続に必要不可欠な役割があるということ
+
+        扁桃体の役割は、警報システムのようなもの
+
+        また、扁桃体はストレスに反応する
+
+        つまりストレスがストレスを生む悪循環を生み出すものなのである
+
+        扁桃体がないとどうなるか
+
+        海馬の機能
+
+        海馬は記憶を司るだけでなく、ストレスのブレーキの役割もある
+
+        海馬の役割
+
+        海馬の細胞は、過度なコルチゾールにさらされると死んでしまう
+
+        つまり、ストレスが溜まりやすい環境に身を置くと海馬が萎縮してしまうのである
+
+        DaigoがよくいうストレスによってIQが下がるっていうのもこれに関係あるのかっ！
+
+        運動とストレス
+
+        運動することはある種のストレスにさらされるわけである
+
+        しかし、定期的な運動を続けていると、運動中のコルチゾール分泌量は減っていく
+
+        そうすると、運動以外のことでも分泌されるストレス量が減少することがわかっている
+
+        つまり運動自体がストレス予防になるということである
+
+        海馬だけでなく、前頭葉（主に思考するのに使う領域）も同じくストレスと抑制する機能がある
+
+        心配性の人は前頭葉が萎縮している
+
+        前頭葉が小さいと、扁桃体の分泌するコルチゾールを抑える機能がないからである
+
+        前頭葉
+
+        前頭葉は長期の運動によって成長することがわかっている
+
+        運動を長期的に行なっている人は、前頭葉が物理的に成長していることがわかった
+
+        運動によって筋肉だけでなく、脳も鍛えることができるということである
+
+        前頭葉の前部にある前頭前皮質は、脳の指令等のような役割がある
+
+        抽象的思考、数学的思考といった人間が唯一できる思考を司る部位でもある
+
+        子供がイライラしやすいのは仕方がない！？
+
+        脳の機能が発達する時間はバラバラである
+
+        例えば、扁桃体が完成するのは17歳の時
+
+        一方で、前頭葉は25歳ほどだと言われている
+
+        つまり、扁桃体というストレスを司る部位が完成するのに対して、前頭葉というストレスを抑える部位が未発達のためなのである（子供の感情が激しいのは仕方のないこと…！）
+
+        ウォーキングかランニングか
+
+        結論から言うと、ランニングのほうが効果的である
+
+        ランニングをすることで、ストレスがかかり脳は臨戦体制に入る
+
+        しかし、その後ドーパミンやエンドルフィンといった物質が分泌され、脳は快楽を覚える
+
+        これが継続されると脳は「ストレスがかかる＝快楽を感じること」と感じるようになる
+
+        ちなみにウォーキングではこの効果は見られなかったらしい
+
+        結果としてストレス耐性にもつながると言うわけである
+
+        ### 集中力を高める
+
+        選択的注意
+
+        ウォーキングを継続的に続けた人は、選択的注意力が高まることがわかった
+
+        前頭葉や頭頂葉などが活性化している人は、選択的注意力が高い
+
+        理由としては、ウォーキングをしたことで、前頭葉の細胞同士のつながりが増えたからであると考えられている
+
+        情報が多く扱いきれなくなった時に、前頭葉にギアを入れるように集中できるようになったと言うわけである
+
+        運動することで、周囲の環境に対する注意力が高まる
+
+        側坐核
+
+        側坐核は報酬中枢と言われる部位である
+
+        側坐核から報酬をもらうと、人間は心地よい気分になる
+
+        側坐核は運動や性行為などをすることで、ドーパミンを分泌する
+
+        人間が性行為、食事、社会交流、運動をすることでドーパミンが分泌されるのは、種としての生存確率が上がるためである
+
+        原始人がこういった行動をしてきた結果、脳はこの行動を促すことで生き残ろうとするようになった
+
+        ADHDの人は、ドーパミンの受容体が少ないため、多くの人が快感を得るものから快感を得ることができず、結果として注意力が散漫になる
+
+        意識の正体
+
+        意識とは、視覚や聴覚などの知覚が前頭葉や頭頂葉と連携した結果であると考えられている
+
+        視床という脳の情報の中継地点のようなものがある
+
+        ここは全ての領域の情報が集まる場所である
+
+        このあつまりが意識を生成していると言われている
+
+        ここで情報の取捨選択をおこなっており、必要な情報かどうかのふるいにかけられる
+
+        集中力は鍛えることができる
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        #### 仕事、運動、勉強全てでプラスになる
+
+        睡眠は全てにおいて重要である。
+
+        睡眠不足の状態はアルコールを飲んだ状態と同じくらい、認知能力に影響をたえる。
+
+        仕事においても寝不足だと悪い結果になりかねない。
+
+        仕事では人の話に耳を傾け、重要なことを選択し集中する必要があり、正しく優先順位をつける必要がある。
+
+        寝不足だとそのような能力に対して大きな悪影響がある。
+
+        寝不足の状態だと前頭葉の良心の阿責を感じにくくなり、大雑把な行動、衝動的な行動、無責任な行動をしやすくなるという研究結果もある。
+
+        寝不足だと衝動的になりやすいのだ。
+
+        仕事でもパフォーマンスを発揮するために、睡眠は非常に大切。何よりも睡眠を重要視するべきである。
+
+        ![🐶](<Base64-Image-Removed>)
+
+        前頭葉
+
+        ### 第7章　眠って感情脳を整える
+
+        #### 徹夜によって扁桃体が過剰反応する
+
+        レム睡眠の時、我々は扁桃体が活発になっている。
+
+        扁桃体はストレスを感じ、注意を促したり、アドレナリンの放出を促したりといった役割を持つ。
+
+        その扁桃体からさまざまな感情と結びついた記憶が呼び起こされる。（お母さんから怒られた記憶とか！）
+
+        そして、レム睡眠にはそれらの呼び起こされた記憶から感情的な部分を取り除き、理性的なレベルに切り落としていく役割もある！
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        #### 第4ステージ：外見で夢を見ているかどうかわかる
+
+        レム睡眠時は閉じられた瞼の下で眼球が素早く活動しているかどうかでわかる。
+
+        レム睡眠は英語にすると、Rapid Eye Movementである。この頭文字をとってREM睡眠なのである。
+
+        レム睡眠時はランダムに記憶を思い出す。
+
+        レム睡眠時は脳は覚醒時と同じくらい活発に動いている。レム睡眠の初め、脳の深部から視床を経由し、大脳皮質に脳波が送られる。
+
+        これにより、大脳皮質のことなる領域の活動を促す。この時にさまざまな記憶が呼び起こされる。
+
+        海馬は記憶を司る領域だが、レム睡眠の間は海馬はどの記憶を活性化させるかといった指揮権を持たない。そのため、レム睡眠時はランダムに記憶を呼び起こしてしまい、それが夢となる。
+
+        感情を呼び起こしたもの、日中処理しきれなかった記憶などが活性化される。
+
+        ![🐶](<Base64-Image-Removed>)
+
+        睡眠紡錘波
+
+        ![🐶](<Base64-Image-Removed>)
+
+        ソマトロピン
+
+        ![🐶](<Base64-Image-Removed>)
+
+        シナプス
+
+        ### 第3章　体内時計を完全に味方にする
+
+        #### 視交叉上核
+
+        視交叉上核はマスタークロックとも呼ばれる。マスタークロックは、左右の視神経が交わるちょうど上に位置する。
+      type: Document
+    lc: 1
+    type: constructor
+  - id:
+      - langchain
+      - schema
+      - document
+      - Document
+    kwargs:
+      metadata:
+        apple-itunes-app: app-id=1232780281
+        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        favicon: https://monta-database.notion.site/images/favicon.ico
+        format-detection: telephone=no
+        language: en
+        mobile-web-app-capable: yes
+        msapplication-tap-highlight: no
+        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        og:image: https://www.notion.so/images/meta/default.png
+        og:locale: en_US
+        og:site_name: Notion
+        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        og:type: website
+        og:url: https://www.notion.so
+        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        ogImage: https://www.notion.so/images/meta/default.png
+        ogLocale: en_US
+        ogSiteName: Notion
+        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        ogUrl: https://www.notion.so
+        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        statusCode: 200
+        title: 熟睡者
+        twitter:card: summary_large_image
+        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+        twitter:image: https://www.notion.so/images/meta/default.png
+        twitter:site: "@NotionHQ"
+        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+        twitter:url: https://www.notion.so
+        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |-
+        [短期記憶が長期記憶となるプロセス](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#27503e40c024430d87fd39ec12bbf0d7)
+
+        [何度もやったことを脳は優先して覚える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#90d95dbb1c124f4b91360e1a868ff189)
+
+        [仕事、運動、勉強全てでプラスになる](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#24d1df69dc1c4c46992e5b455e6ce7a6)
+
+        [第7章　眠って感情脳を整える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#6060a4a5ebf3423ba9ab7ddb9cb74849)
+      type: Document
+    lc: 1
+    type: constructor
+  </details>
+
+  このようにドキュメントの中には大量のメタデータがあることがわかる。
+  このメタデータの量が多すぎて許容できるバイト数を超えてしまっていたのだ。
+
+  ドキュメントの量が多すぎるとそれを表現するためにより多くのバイト数が必要なことからもこれは感覚的にわかること。
+
   なので直接埋め込もうとすると、エラーになるので長いドキュメントの時はテキストを分割して埋め込むようにしようねということだ。勉強になりました。
 
 ### ChatGPT による解説
