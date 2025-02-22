@@ -11,6 +11,8 @@ python-dotenv = "*"
 langchain-experimental = "*"
 langchainhub = "*"
 qrcode = "*"
+pandas = "*"
+tabulate = "*"
 
 [dev-packages]
 
