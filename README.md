@@ -3862,3 +3862,47 @@ grand_agent_executor = AgentExecutor(agent=grand_agent, tools=tools, verbose=Tru
 </details>
 
 ### まとめ
+
+この章では、LangChainを使ってCode InterPriterを実行する方法について学んだ。
+
+例えば、『特定のURLを読み込めるQRコードを作成して』みたいなプロンプトを投げた時に、LangChainが自動でコードを書き、それを実行し、最終的にQRコードをユーザーのローカルPCに作成するみたいなことがCode Interpriterを使えばできるようになる。
+
+そのためには、Pythonコードを作成するToolを作成する必要があるのだが、LangChainの場合は`PythonREPLTool`をtoolとして渡せばOKであることがわかった。
+
+これをtoolとして渡すことで、QRコードを生成してみたいな質問も、LLMが考えて、コードを作成し、実行し、ローカル環境にQRコードを作ってくれるみたいなことをしてくれるとういことがわかった。
+
+その他にもCSVを読み込む必要があるようなタスクにおいても、`create_csv_agent`を使うことで楽に実装できることがわかった。
+
+この関数は、pandasを使って対象のCSVを読み込み、与えられたタスクを実行してくれるAgentを作成するというもの。
+
+> Create pandas dataframe agent by loading csv to a dataframe.
+
+これを使えば、AgentがCSVを読み、特定の文字を読み込んだり、最も数の多いデータを読み込んだりといったタスクができるようになる。便利すぎる。
+
+そして、最も便利だなと思ったのが、Router Agentである。
+RouterAgentは先ほど説明したAgent ExecutorをToolとして再定義し、Toolsとして作成することで、LLMが与えられたタスクを満たすために、必要なAgent Executorは何かを考え、実行してくれるようになるというもの。
+
+例えば、Toolsとして、pythonコードを実行するAgentExecutorとCSVを読み込むAgentExecutorを渡して、LLMに対して「QRコードを作成して」というクエリを投げれば、LLMが『CSVは関係ないから、これじゃなくて…Pythonコードを実行するToolを使えばええんや！』というのを考えるようになる。意味わからん。便利すぎるやろ。
+
+このRouter Agentにおいて重要なのはAgentExecutorの再定義にあると思った。
+
+```python
+    tools = [
+        Tool(
+            name="Python Agent",
+            func=python_agent_executor_wrapper,
+            description="""useful when you need to transform natural language to python and execute the python code,
+                      returning the results of the code execution
+                      DOES NOT ACCEPT CODE AS INPUT""",
+        ),
+        Tool(
+            name="CSV Agent",
+            func=csv_agent_executor.invoke,
+            description="""useful when you need to answer question over episode_info.csv file,
+                      takes an input the entire question and returns the answer after running pandas calculations""",
+        ),
+    ]
+```
+
+上記コードのように、AgentExecutorをfuncに渡して、それぞれの名前と説明を添えることで、Toolsの再定義を行うことで、Router Agentができあがる。
+
