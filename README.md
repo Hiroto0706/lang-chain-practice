@@ -2428,7 +2428,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
   個人的に衝撃的だったのが langchain のドキュメントローダーに firecrawl が含まれていること。URL と mode を指定するだけで、よしなにその URL の情報を取得し、テキストスプリッターやら embeddings やらに渡せるのが便利すぎる。
 
-  ※これは余談だが、本のメモなどをテキストスプリットする場合はchunk_sizeは大きくした方が良い。600とかだとあまり多くの情報を含まないためだ。また、マークダウンで書かれてあるようなサイトだとテキスト以外の情報が多いので600とかだと全く重要な情報はチャンクに含まれない。
+  ※これは余談だが、本のメモなどをテキストスプリットする場合は chunk_size は大きくした方が良い。600 とかだとあまり多くの情報を含まないためだ。また、マークダウンで書かれてあるようなサイトだとテキスト以外の情報が多いので 600 とかだと全く重要な情報はチャンクに含まれない。
 
 - **テキストスプリッターって重要やったんやって話**
 
@@ -2440,7 +2440,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   # HTTP 応答本文: {"code":3,"message":"メタデータのサイズは 42177 バイトで、ベクトルあたり 40960 バイトの制限を超えています","details":[]}
   ```
 
-  要はPineconeが許容しているベクトルデータのバイト数は40960バイトなのに対して、埋め込もうとしているベクトルデータがそれを超えているからエラーになっていたのだ。
+  要は Pinecone が許容しているベクトルデータのバイト数は 40960 バイトなのに対して、埋め込もうとしているベクトルデータがそれを超えているからエラーになっていたのだ。
 
   ちなみに、この問題はテキストスプリッターを使うことで解決する。
 
@@ -2449,7 +2449,7 @@ vectorstore = FAISS.from_documents(docs, embeddings)
   しかし、実際にはテキストスプリットをすることでベクトルデータのバイト数は減るのだ。
   その理由はメタデータの数が減るからである。
 
-  単純に長いドキュメントを埋め込もうとすると、メタデータの量も膨大になり、結果として上限を超えてしまうのだ。ちなみにメタデータにはURLやタイトルなど多くの情報が含まれる。
+  単純に長いドキュメントを埋め込もうとすると、メタデータの量も膨大になり、結果として上限を超えてしまうのだ。ちなみにメタデータには URL やタイトルなど多くの情報が含まれる。
 
   <details>
   <summary>確かにメタデータがたくさんあることがわかる</summary>
@@ -2734,211 +2734,214 @@ vectorstore = FAISS.from_documents(docs, embeddings)
 
         集中力は鍛えることができる
       type: Document
-    lc: 1
-    type: constructor
+
+  lc: 1
+  type: constructor
+
   - id:
-      - langchain
-      - schema
-      - document
-      - Document
-    kwargs:
+
+    - langchain
+    - schema
+    - document
+    - Document
+      kwargs:
       metadata:
-        apple-itunes-app: app-id=1232780281
-        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        favicon: https://monta-database.notion.site/images/favicon.ico
-        format-detection: telephone=no
-        language: en
-        mobile-web-app-capable: yes
-        msapplication-tap-highlight: no
-        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        og:image: https://www.notion.so/images/meta/default.png
-        og:locale: en_US
-        og:site_name: Notion
-        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        og:type: website
-        og:url: https://www.notion.so
-        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        ogImage: https://www.notion.so/images/meta/default.png
-        ogLocale: en_US
-        ogSiteName: Notion
-        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        ogUrl: https://www.notion.so
-        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
-        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        statusCode: 200
-        title: 熟睡者
-        twitter:card: summary_large_image
-        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        twitter:image: https://www.notion.so/images/meta/default.png
-        twitter:site: "@NotionHQ"
-        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        twitter:url: https://www.notion.so
-        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
-      page_content: |-
-        #### 仕事、運動、勉強全てでプラスになる
+      apple-itunes-app: app-id=1232780281
+      description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      favicon: https://monta-database.notion.site/images/favicon.ico
+      format-detection: telephone=no
+      language: en
+      mobile-web-app-capable: yes
+      msapplication-tap-highlight: no
+      og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      og:image: https://www.notion.so/images/meta/default.png
+      og:locale: en_US
+      og:site_name: Notion
+      og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      og:type: website
+      og:url: https://www.notion.so
+      ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      ogImage: https://www.notion.so/images/meta/default.png
+      ogLocale: en_US
+      ogSiteName: Notion
+      ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      ogUrl: https://www.notion.so
+      scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+      sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+      statusCode: 200
+      title: 熟睡者
+      twitter:card: summary_large_image
+      twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      twitter:image: https://www.notion.so/images/meta/default.png
+      twitter:site: "@NotionHQ"
+      twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      twitter:url: https://www.notion.so
+      url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+      viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |- #### 仕事、運動、勉強全てでプラスになる
 
-        睡眠は全てにおいて重要である。
+          睡眠は全てにおいて重要である。
 
-        睡眠不足の状態はアルコールを飲んだ状態と同じくらい、認知能力に影響をたえる。
+          睡眠不足の状態はアルコールを飲んだ状態と同じくらい、認知能力に影響をたえる。
 
-        仕事においても寝不足だと悪い結果になりかねない。
+          仕事においても寝不足だと悪い結果になりかねない。
 
-        仕事では人の話に耳を傾け、重要なことを選択し集中する必要があり、正しく優先順位をつける必要がある。
+          仕事では人の話に耳を傾け、重要なことを選択し集中する必要があり、正しく優先順位をつける必要がある。
 
-        寝不足だとそのような能力に対して大きな悪影響がある。
+          寝不足だとそのような能力に対して大きな悪影響がある。
 
-        寝不足の状態だと前頭葉の良心の阿責を感じにくくなり、大雑把な行動、衝動的な行動、無責任な行動をしやすくなるという研究結果もある。
+          寝不足の状態だと前頭葉の良心の阿責を感じにくくなり、大雑把な行動、衝動的な行動、無責任な行動をしやすくなるという研究結果もある。
 
-        寝不足だと衝動的になりやすいのだ。
+          寝不足だと衝動的になりやすいのだ。
 
-        仕事でもパフォーマンスを発揮するために、睡眠は非常に大切。何よりも睡眠を重要視するべきである。
+          仕事でもパフォーマンスを発揮するために、睡眠は非常に大切。何よりも睡眠を重要視するべきである。
 
-        ![🐶](<Base64-Image-Removed>)
+          ![🐶](<Base64-Image-Removed>)
 
-        前頭葉
+          前頭葉
 
-        ### 第7章　眠って感情脳を整える
+          ### 第7章　眠って感情脳を整える
 
-        #### 徹夜によって扁桃体が過剰反応する
+          #### 徹夜によって扁桃体が過剰反応する
 
-        レム睡眠の時、我々は扁桃体が活発になっている。
+          レム睡眠の時、我々は扁桃体が活発になっている。
 
-        扁桃体はストレスを感じ、注意を促したり、アドレナリンの放出を促したりといった役割を持つ。
+          扁桃体はストレスを感じ、注意を促したり、アドレナリンの放出を促したりといった役割を持つ。
 
-        その扁桃体からさまざまな感情と結びついた記憶が呼び起こされる。（お母さんから怒られた記憶とか！）
+          その扁桃体からさまざまな感情と結びついた記憶が呼び起こされる。（お母さんから怒られた記憶とか！）
 
-        そして、レム睡眠にはそれらの呼び起こされた記憶から感情的な部分を取り除き、理性的なレベルに切り落としていく役割もある！
+          そして、レム睡眠にはそれらの呼び起こされた記憶から感情的な部分を取り除き、理性的なレベルに切り落としていく役割もある！
+
       type: Document
-    lc: 1
-    type: constructor
+      lc: 1
+      type: constructor
+
   - id:
-      - langchain
-      - schema
-      - document
-      - Document
-    kwargs:
+
+    - langchain
+    - schema
+    - document
+    - Document
+      kwargs:
       metadata:
-        apple-itunes-app: app-id=1232780281
-        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        favicon: https://monta-database.notion.site/images/favicon.ico
-        format-detection: telephone=no
-        language: en
-        mobile-web-app-capable: yes
-        msapplication-tap-highlight: no
-        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        og:image: https://www.notion.so/images/meta/default.png
-        og:locale: en_US
-        og:site_name: Notion
-        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        og:type: website
-        og:url: https://www.notion.so
-        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        ogImage: https://www.notion.so/images/meta/default.png
-        ogLocale: en_US
-        ogSiteName: Notion
-        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        ogUrl: https://www.notion.so
-        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
-        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        statusCode: 200
-        title: 熟睡者
-        twitter:card: summary_large_image
-        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        twitter:image: https://www.notion.so/images/meta/default.png
-        twitter:site: "@NotionHQ"
-        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        twitter:url: https://www.notion.so
-        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
-      page_content: |-
-        #### 第4ステージ：外見で夢を見ているかどうかわかる
+      apple-itunes-app: app-id=1232780281
+      description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      favicon: https://monta-database.notion.site/images/favicon.ico
+      format-detection: telephone=no
+      language: en
+      mobile-web-app-capable: yes
+      msapplication-tap-highlight: no
+      og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      og:image: https://www.notion.so/images/meta/default.png
+      og:locale: en_US
+      og:site_name: Notion
+      og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      og:type: website
+      og:url: https://www.notion.so
+      ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      ogImage: https://www.notion.so/images/meta/default.png
+      ogLocale: en_US
+      ogSiteName: Notion
+      ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      ogUrl: https://www.notion.so
+      scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+      sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+      statusCode: 200
+      title: 熟睡者
+      twitter:card: summary_large_image
+      twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+      twitter:image: https://www.notion.so/images/meta/default.png
+      twitter:site: "@NotionHQ"
+      twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+      twitter:url: https://www.notion.so
+      url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+      viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+      page_content: |- #### 第 4 ステージ：外見で夢を見ているかどうかわかる
 
-        レム睡眠時は閉じられた瞼の下で眼球が素早く活動しているかどうかでわかる。
+          レム睡眠時は閉じられた瞼の下で眼球が素早く活動しているかどうかでわかる。
 
-        レム睡眠は英語にすると、Rapid Eye Movementである。この頭文字をとってREM睡眠なのである。
+          レム睡眠は英語にすると、Rapid Eye Movementである。この頭文字をとってREM睡眠なのである。
 
-        レム睡眠時はランダムに記憶を思い出す。
+          レム睡眠時はランダムに記憶を思い出す。
 
-        レム睡眠時は脳は覚醒時と同じくらい活発に動いている。レム睡眠の初め、脳の深部から視床を経由し、大脳皮質に脳波が送られる。
+          レム睡眠時は脳は覚醒時と同じくらい活発に動いている。レム睡眠の初め、脳の深部から視床を経由し、大脳皮質に脳波が送られる。
 
-        これにより、大脳皮質のことなる領域の活動を促す。この時にさまざまな記憶が呼び起こされる。
+          これにより、大脳皮質のことなる領域の活動を促す。この時にさまざまな記憶が呼び起こされる。
 
-        海馬は記憶を司る領域だが、レム睡眠の間は海馬はどの記憶を活性化させるかといった指揮権を持たない。そのため、レム睡眠時はランダムに記憶を呼び起こしてしまい、それが夢となる。
+          海馬は記憶を司る領域だが、レム睡眠の間は海馬はどの記憶を活性化させるかといった指揮権を持たない。そのため、レム睡眠時はランダムに記憶を呼び起こしてしまい、それが夢となる。
 
-        感情を呼び起こしたもの、日中処理しきれなかった記憶などが活性化される。
+          感情を呼び起こしたもの、日中処理しきれなかった記憶などが活性化される。
 
-        ![🐶](<Base64-Image-Removed>)
+          ![🐶](<Base64-Image-Removed>)
 
-        睡眠紡錘波
+          睡眠紡錘波
 
-        ![🐶](<Base64-Image-Removed>)
+          ![🐶](<Base64-Image-Removed>)
 
-        ソマトロピン
+          ソマトロピン
 
-        ![🐶](<Base64-Image-Removed>)
+          ![🐶](<Base64-Image-Removed>)
 
-        シナプス
+          シナプス
 
-        ### 第3章　体内時計を完全に味方にする
+          ### 第3章　体内時計を完全に味方にする
 
-        #### 視交叉上核
+          #### 視交叉上核
 
-        視交叉上核はマスタークロックとも呼ばれる。マスタークロックは、左右の視神経が交わるちょうど上に位置する。
+          視交叉上核はマスタークロックとも呼ばれる。マスタークロックは、左右の視神経が交わるちょうど上に位置する。
+
       type: Document
+      lc: 1
+      type: constructor
+
+  - id: - langchain - schema - document - Document
+    kwargs:
+    metadata:
+    apple-itunes-app: app-id=1232780281
+    description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+    favicon: https://monta-database.notion.site/images/favicon.ico
+    format-detection: telephone=no
+    language: en
+    mobile-web-app-capable: yes
+    msapplication-tap-highlight: no
+    og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+    og:image: https://www.notion.so/images/meta/default.png
+    og:locale: en_US
+    og:site_name: Notion
+    og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+    og:type: website
+    og:url: https://www.notion.so
+    ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+    ogImage: https://www.notion.so/images/meta/default.png
+    ogLocale: en_US
+    ogSiteName: Notion
+    ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+    ogUrl: https://www.notion.so
+    scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
+    sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+    statusCode: 200
+    title: 熟睡者
+    twitter:card: summary_large_image
+    twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
+    twitter:image: https://www.notion.so/images/meta/default.png
+    twitter:site: "@NotionHQ"
+    twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
+    twitter:url: https://www.notion.so
+    url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
+    viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
+    page_content: |-
+    [短期記憶が長期記憶となるプロセス](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#27503e40c024430d87fd39ec12bbf0d7)
+
+          [何度もやったことを脳は優先して覚える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#90d95dbb1c124f4b91360e1a868ff189)
+
+          [仕事、運動、勉強全てでプラスになる](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#24d1df69dc1c4c46992e5b455e6ce7a6)
+
+          [第7章　眠って感情脳を整える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#6060a4a5ebf3423ba9ab7ddb9cb74849)
+        type: Document
+
     lc: 1
     type: constructor
-  - id:
-      - langchain
-      - schema
-      - document
-      - Document
-    kwargs:
-      metadata:
-        apple-itunes-app: app-id=1232780281
-        description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        favicon: https://monta-database.notion.site/images/favicon.ico
-        format-detection: telephone=no
-        language: en
-        mobile-web-app-capable: yes
-        msapplication-tap-highlight: no
-        og:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        og:image: https://www.notion.so/images/meta/default.png
-        og:locale: en_US
-        og:site_name: Notion
-        og:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        og:type: website
-        og:url: https://www.notion.so
-        ogDescription: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        ogImage: https://www.notion.so/images/meta/default.png
-        ogLocale: en_US
-        ogSiteName: Notion
-        ogTitle: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        ogUrl: https://www.notion.so
-        scrapeId: 0ae8dbdd-a016-418c-9223-bc464bd75c41
-        sourceURL: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        statusCode: 200
-        title: 熟睡者
-        twitter:card: summary_large_image
-        twitter:description: A new tool that blends your everyday work apps into one. It's the all-in-one workspace for you and your team
-        twitter:image: https://www.notion.so/images/meta/default.png
-        twitter:site: "@NotionHQ"
-        twitter:title: Notion – The all-in-one workspace for your notes, tasks, wikis, and databases.
-        twitter:url: https://www.notion.so
-        url: https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7
-        viewport: width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover
-      page_content: |-
-        [短期記憶が長期記憶となるプロセス](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#27503e40c024430d87fd39ec12bbf0d7)
-
-        [何度もやったことを脳は優先して覚える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#90d95dbb1c124f4b91360e1a868ff189)
-
-        [仕事、運動、勉強全てでプラスになる](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#24d1df69dc1c4c46992e5b455e6ce7a6)
-
-        [第7章　眠って感情脳を整える](https://monta-database.notion.site/f9257d2f834d416ab2e65397f17072a7?pvs=25#6060a4a5ebf3423ba9ab7ddb9cb74849)
-      type: Document
-    lc: 1
-    type: constructor
-  </details>
+    </details>
 
   このようにドキュメントの中には大量のメタデータがあることがわかる。
   このメタデータの量が多すぎて許容できるバイト数を超えてしまっていたのだ。
@@ -3443,7 +3446,7 @@ for i, chunk in enumerate(chunks):
 
 ### まとめ
 
-この章ではRAG, Embeddings, Streamlit, FireCrawlについて学んだ。
+この章では RAG, Embeddings, Streamlit, FireCrawl について学んだ。
 
 今までの章で学んだことを総括したものっていう印象を持った。
 
@@ -3455,10 +3458,10 @@ for i, chunk in enumerate(chunks):
 
 である。
 
-特に感動したのがfirecrawl loaderである。
-firacrawlはURLを渡せばそのサイトをクリーリングしてくれるサービスで、さらにLangChainのドキュメントローダーとして使える。
+特に感動したのが firecrawl loader である。
+firacrawl は URL を渡せばそのサイトをクリーリングしてくれるサービスで、さらに LangChain のドキュメントローダーとして使える。
 
-つまり、チェーンの中にFireCrawlを使ったクローリングを組み込み、その結果を別のチェーンに渡すことができるということ。
+つまり、チェーンの中に FireCrawl を使ったクローリングを組み込み、その結果を別のチェーンに渡すことができるということ。
 
 今回は以下のような使い方をした。
 
@@ -3480,19 +3483,19 @@ loader = FireCrawlLoader(
         )
 ```
 
-やっていることはめちゃくちゃシンプルで、FireCrawlLoaderのオブジェクトの作成、対象のURLをスクレイピング、Pineconeのベクトルバイトの許容量を超えないようにテキストをスプリットし、最終的にベクトルDBに埋め込みをする。
+やっていることはめちゃくちゃシンプルで、FireCrawlLoader のオブジェクトの作成、対象の URL をスクレイピング、Pinecone のベクトルバイトの許容量を超えないようにテキストをスプリットし、最終的にベクトル DB に埋め込みをする。
 
 という使い方をした。
 
-これだけで、自分が指定したURLの内容をベクトルDBに埋め込むことができるようになる。楽すぎる…
+これだけで、自分が指定した URL の内容をベクトル DB に埋め込むことができるようになる。楽すぎる…
 
 その他には、`create_history_aware_retriever()`を使うことで会話履歴を考慮してベクトル検索ができるということも学んだ。
 
-`create_history_aware_retriever`を使うことで、chat_historyを考慮した上でクエリを作成し、それに関連するコンテキストをベクトルDBから探してくれるというもの。
+`create_history_aware_retriever`を使うことで、chat_history を考慮した上でクエリを作成し、それに関連するコンテキストをベクトル DB から探してくれるというもの。
 
 例えば会話の中で、システムプロンプトについて質問をしていたとする。
 
-その後の会話で、「それの具体例を教えて」と投げる。chat_historyを考慮しているので、embeddingsモデルがベクトル検索する時に『**それ？それってなんや、、、あ、システムプロンプトのことね。やから質問文は「システムプロンプトの具体例を教えて」やな。**』というふうに考えてベクトル検索をしてくれるようになるのだ。
+その後の会話で、「それの具体例を教えて」と投げる。chat_history を考慮しているので、embeddings モデルがベクトル検索する時に『**それ？それってなんや、、、あ、システムプロンプトのことね。やから質問文は「システムプロンプトの具体例を教えて」やな。**』というふうに考えてベクトル検索をしてくれるようになるのだ。
 
 これも実装はめちゃくちゃ簡単。以下のように実装する。
 
@@ -3514,8 +3517,348 @@ loader = FireCrawlLoader(
     result = qa.invoke(input={"input": query, "chat_history": chat_history})
 ```
 
-重要なのはrephrase_promptとhistory_aware_retrieverである。
+重要なのは rephrase_prompt と history_aware_retriever である。
 
-rephrase_promptは会話履歴を考慮した上でシンプルな質問をembeddinggsモデルに投げかけるためのプロンプト。
+rephrase_prompt は会話履歴を考慮した上でシンプルな質問を embeddinggs モデルに投げかけるためのプロンプト。
 
-`create_retrieval_chain`のretrieverとして`history_aware_retriever`を設定することで、LLMがchat_historyを考慮した上でベクトル検索を行ってくれるようになる。
+`create_retrieval_chain`の retriever として`history_aware_retriever`を設定することで、LLM が chat_history を考慮した上でベクトル検索を行ってくれるようになる。
+
+## Slim Code Interpreter
+
+- **PythonREPLTool について**:
+
+  まず、REPL とは Read-Eval-Print Loop のこと。
+  ユーザーがキーボード入力したコードを評価・実行・結果の出力を行うインタラクティブな実行環境のことを指す。
+
+  んで、この講座で使った PythonREPLTool っていうのは Python のコードを書いて、それを実行し、出力してくれるためのツールだよってこと。
+
+  ```python
+  class PythonREPLTool(BaseTool):
+      """Tool for running python code in a REPL."""
+
+      name: str = "Python_REPL"
+      description: str = (
+          "A Python shell. Use this to execute python commands. "
+          "Input should be a valid python command. "
+          "If you want to see the output of a value, you should print it out "
+          "with `print(...)`."
+      )
+      python_repl: PythonREPL = Field(default_factory=_get_default_python_repl)
+      sanitize_input: bool = True
+  ```
+
+  description を見た感じ、Python のコードを実行するためのシェルであることがわかる。そして、実行する Python コードはバリデーションされてある必要があり、実行結果は print を使って表示していることがわかる。
+
+  これを tools として設定し、`create_react_agent()`を用いて agent を作成し、実行することで Agent はユーザーからのクエリを満たすために必要な Python コードを自ら実行するようになる。すげぇなぁ〜。
+
+- **allow_dangerous_code について**:
+
+  ```python
+  def main2():
+      csv_agent = create_csv_agent(
+          llm=ChatOpenAI(temperature=0, model="gpt-4o"),
+          path="episode_info.csv",
+          verbose=True,
+      )
+
+      csv_agent.invoke(
+          input={"input": "how many columns are there in file episode_info.csv"}
+      )
+  ```
+
+  このコードを実行しようとした時に、以下のようなエラーが表示された。
+
+  > ValueError: This agent relies on access to a python repl tool which can execute arbitrary code. This can be dangerous and requires a specially sandboxed environment to be safely used. Please read the security notice in the doc-string of this function. You must opt-in to use this functionality by setting allow_dangerous_code=True.For general security guidelines, please see: https://python.langchain.com/docs/security/
+
+  このエラーは agent が python コードを実行しようとする時に、『PythonREPL ツールを使用してコードを実行するため、危険だけど大丈夫？』ってことを警告している。
+
+  それでもいいのなら、allow_dangerous_code を True にしてねということが書かれてあったので、agent を作成する時に以下のように allow_dangerous_code を True にする設定を追加したら、エラーは解消された。
+
+  ```python
+  csv_agent = create_csv_agent(
+    llm=ChatOpenAI(temperature=0, model="gpt-4o"),
+    path="episode_info.csv",
+    verbose=True,
+    allow_dangerous_code=True,
+  )
+  ```
+
+- **なぜ 2 回 Tools を渡しているのか？**:
+
+  これ忘れていたのでメモ。
+
+  ```python
+  tools = [PythonREPLTool()]
+  agent = create_react_agent(
+      prompt=prompt, llm=ChatOpenAI(temperature=0, model="gpt-4o"), tools=tools
+  )
+
+  python_agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+  ```
+
+  上記のコードで、agent の作成と agent_executor の作成の時に 2 回 tools を渡していて、冗長じゃね？って思った。
+
+  しかし、これ実は 2 回とも引数に渡す必要がある。
+
+  それは agent を作成する時に、「こういう Tools を使う必要があるよ〜」という情報を agent に渡すことで、自然言語情報をもとに、Agent にどの Tool を使うべきかを伝えるために必要。
+
+  そして、agent_executor には agent が選んだ Tool を実行する必要がある。「あ、Agent はこの Tool を使えっていっているな。引数で受け取っている Tool の中だと…こいつか！よし、こいつを実行しよう」っていう流れを実現するために tools を引数に渡す必要がある。
+
+  そのため、Agent と AgentExecutor を作成する時には面倒なのだが、2 回引数に tools を渡す必要があるのだ。2 回とも別々の役割のために Tools が必要ってことを覚えておこう。
+
+- **Router Agent について**:
+
+  この章では Router Agent について理解した。Router Agent とは、AgentExecutor の Wrapper を作成することで、LLM が『この質問に最も適している Agent Executor はなにか』を思考した上で実行してくれるようになる Agent である。
+
+  ```python
+    tools = [
+        Tool(
+            name="Python Agent",
+            func=python_agent_executor_wrapper,
+            description="""useful when you need to transform natural language to python and execute the python code,
+                      returning the results of the code execution
+                      DOES NOT ACCEPT CODE AS INPUT""",
+        ),
+        Tool(
+            name="CSV Agent",
+            func=csv_agent_executor.invoke,
+            description="""useful when you need to answer question over episode_info.csv file,
+                      takes an input the entire question and returns the answer after running pandas calculations""",
+        ),
+    ]
+
+    prompt = base_prompt.partial(instructions="")
+    grand_agent = create_react_agent(
+        prompt=prompt, llm=ChatOpenAI(temperature=0, model="gpt-4o"), tools=tools
+    )
+
+    grand_agent_executor = AgentExecutor(agent=grand_agent, tools=tools, verbose=True)
+  ```
+
+  上記のコードを例にする。このコードでは tools というリストを作成している。このリストは Tool のリストになっている。それぞれ、csv に関するコードを実行する AgentExecutor と python コードを実行する AgentExecutor を func に渡している。
+
+  重要なのは agentExecutor を func に渡した Tool を作成するというところにある。AgentExecutor を func に渡して Tool を再定義し、Wrapper した AgentExecutor を作成することで、LLM が『質問にマッチする Tool はどれか』を考えてくれるようになる。これめちゃくちゃすごいなと思った。
+
+  シンプルに Task の定義をわざわざ LLM インスタンスを作成せずに、Tool に渡すだけで勝手に考えてくれるということだからだ。すごく便利だなと思った。
+
+  <details>
+  <summary>添削</summary>
+  その通りです。
+
+  あなたの理解は正しく、以下の点が特に重要です：
+
+  - **エージェント Executor をラップすることで**、LLM は「この質問に対してどのツールが最適か」を自動的に判断できるようになります。
+  - **Tool として登録する際に**、各エージェント Executor（たとえば、Python コード実行用と CSV 解析用）の機能と説明を与えることで、LLM は質問内容に応じて最適なツールを選択します。
+  - その結果、個別の LLM インスタンスを作らずに、単一の Router Agent が適切な Executor を呼び出して実行できる、非常に柔軟かつ効率的な仕組みが実現されます。
+
+  この仕組みが、複雑なタスクに対してもシンプルに対応できる理由の一つです。
+  </details>
+
+### ChatGPT による解説
+
+<details>
+<summary>PythonREPLToolについて</summary>
+以下は、PythonREPLTool クラスについて初学者向けに解説したものです。
+
+---
+
+## PythonREPLTool クラスとは？
+
+### 1. クラスと継承についての基本
+
+- **クラス**とは、オブジェクト（実体）を作るための設計図のようなものです。
+- **継承**（ここでは BaseTool から継承）は、既にある機能をそのまま引き継ぎながら、新しく追加する機能や変更を加えるための仕組みです。
+
+今回の例では、PythonREPLTool は「**BaseTool**」という基本のクラスを元にして作られています。つまり、BaseTool が用意している基本的な機能に、Python のコードを実行できる機能を追加したものと考えてください。
+
+---
+
+## PythonREPLTool の役割
+
+### 2. Python REPL について
+
+- **REPL** とは「Read-Eval-Print Loop（読み取り・評価・出力ループ）」の略で、インタラクティブにプログラムのコードを入力し、その結果をすぐに確認できる仕組みです。
+- このクラスは、**Python のコードを実際に実行するためのツール**として設計されています。たとえば、ユーザーが「この Python コードを実行して結果を出して」と命令すると、内部で Python の REPL 環境を使ってコードを実行し、その結果を返します。
+
+### 3. ツールとしての利用
+
+LangChain のようなフレームワークでは、エージェント（自動でタスクを行うプログラム）に対して「何か外部の作業をさせる」ためのツールを提供します。PythonREPLTool はその一例で、エージェントが知識だけでなく、実際のコード実行による検証結果を得る手段となります。
+
+---
+
+## PythonREPLTool の主な属性（メンバー変数）
+
+通常、このクラスには以下のような属性や機能が含まれています（実際の実装例の一部です）:
+
+- **name**:  
+  ツールの名前を示す属性です。たとえば、"Python_REPL" という名前が設定されることがあり、エージェントや他の部分からこのツールを識別するために使われます。
+
+- \*description\*\*:  
+  このツールが何をするものかを説明する文字列です。例として「Python のシェル（REPL）です。入力された Python コードを実行します。」といった説明が入ります。エージェントがどのツールをいつ使うかを判断する際に参考になります。
+
+- **python_repl**:  
+  実際に Python のコードを実行するための REPL 環境（例えばインタラクティブなシェル）を生成・保持する属性です。この部分があることで、実際にコードが動かされます。
+
+- **sanitize_input**:  
+  入力されたコードを安全に扱うための設定です。コード実行時に不要なトラブルを避けるため、入力の一部を整形（サニタイズ）する場合に使用されます。
+
+---
+
+## まとめ
+
+- PythonREPLTool は **「Python の REPL を利用し、コードを実行するためのツール」** として設計されています。
+- このクラスは、**BaseTool** という共通のツール定義を継承して、エージェントが「実際にコードを実行して結果を得る」という機能を持たせています。
+- 主な属性としては、ツールの名前 (name)、説明 (description)、実際の REPL 環境 (python_repl)、および入力を安全にするための設定 (sanitize_input) などがあります。
+
+この仕組みを使うと、エージェントは「Python のコードを実際に実行してその結果を得る」という作業を自動化でき、例えばプログラムの実行結果を回答に取り入れるなど、応用範囲が広がります。
+
+</details>
+
+<details>
+<summary>Router Agentについて</summary>
+以下は、ルーターエージェントの仕組みを具体例を交えて詳細に解説したものです。
+
+---
+
+## 1. ルーターエージェントとは？
+
+**ルーターエージェント**は、複数の専門エージェント（例えば、Python コードを実行するエージェント、CSV データを扱うエージェントなど）をまとめて管理し、ユーザーからの問い合わせに対してどのエージェントを呼び出すべきかを判断する「振り分け役」です。つまり、質問に応じて適切なエージェントに処理を委ねる仕組みになっています。
+
+---
+
+## 2. 具体的な例で考える
+
+例えば、以下の 2 種類のエージェントがあるとします。
+
+- **Python Agent**  
+  ユーザーの指示に基づき、Python コードを生成・実行するエージェント。  
+  _例_: 「15 個の QR コードを生成して保存して」などの指示に対応。
+
+- **CSV Agent**  
+  CSV ファイル（ここでは `episode_info.csv`）を読み込んで、データ解析や集計を行うエージェント。  
+  _例_: 「どのシーズンが最もエピソード数が多いか？」という質問に回答。
+
+これらを直接呼び出すのではなく、**ルーターエージェント**が「どのツール（＝エージェント）が適切か」を判断し、実行を振り分ける役割を果たします。
+
+---
+
+## 3. ルーターエージェントの実装手順
+
+### 3.1. 個別エージェントの作成
+
+まず、それぞれの専門エージェントを作成し、そのエージェントを実行するための **AgentExecutor** を用意します。
+
+```python
+# Pythonコード実行エージェントの作成
+tools = [PythonREPLTool()]
+agent = create_react_agent(
+    prompt=prompt,
+    llm=ChatOpenAI(temperature=0, model="gpt-4o"),
+    tools=tools
+)
+python_agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+# CSVファイル解析エージェントの作成
+csv_agent_executor = create_csv_agent(
+    llm=ChatOpenAI(temperature=0, model="gpt-4o"),
+    path="episode_info.csv",
+    verbose=True,
+    allow_dangerous_code=True,
+)
+```
+
+ここでは、**Python Agent**と**CSV Agent**それぞれに対応する Executor が作られています。
+
+### 3.2. Executor をツールとしてラップする
+
+次に、これらの Executor を **Tool** オブジェクトとしてラップします。これにより、ルーターエージェントは「利用可能なツール」として各エージェントを認識できるようになります。
+
+```python
+def python_agent_executor_wrapper(original_prompt: str) -> dict[str, Any]:
+    return python_agent_executor.invoke({"input": original_prompt})
+
+tools = [
+    Tool(
+        name="Python Agent",
+        func=python_agent_executor_wrapper,
+        description="""Useful when you need to transform natural language to Python code and execute it.
+                      DOES NOT ACCEPT CODE AS INPUT.""",
+    ),
+    Tool(
+        name="CSV Agent",
+        func=csv_agent_executor.invoke,
+        description="""Useful when you need to answer questions over the episode_info.csv file,
+                      performing pandas-based calculations.""",
+    ),
+]
+```
+
+- **ポイント:**
+  - 各 Tool は、**名前**、**実行する関数（func）**、そして**説明**を持っています。
+  - ルーターエージェントは、この説明文などを参考にして、ユーザーの問い合わせにどのツールを使えば良いか判断します。
+
+### 3.3. ルーターエージェントの作成
+
+上記のツールリストを使って、最終的なルーターエージェント（ここでは `grand_agent` としています）を作成します。
+
+```python
+prompt = base_prompt.partial(instructions="")
+grand_agent = create_react_agent(
+    prompt=prompt,
+    llm=ChatOpenAI(temperature=0, model="gpt-4o"),
+    tools=tools
+)
+grand_agent_executor = AgentExecutor(agent=grand_agent, tools=tools, verbose=True)
+```
+
+このルーターエージェントは、以下のような役割を持ちます。
+
+- **入力を受け取る:** ユーザーからの自然言語の質問や指示を受ける。
+- **解析と判断:** 受け取った入力の内容に基づき、「Python Agent」と「CSV Agent」のどちらが適しているかを LLM が考察する。
+- **該当ツールの呼び出し:** 適切なツール（つまり下位のエージェント Executor）を呼び出し、その結果を返す。
+
+---
+
+## 4. ルーターエージェントの動作例
+
+### 例 1: CSV に関する質問
+
+**ユーザー入力:**  
+「Which season has the most episodes?」
+
+**処理の流れ:**
+
+1. ルーターエージェントは入力を受け取り、内容から「シーズン」「エピソード数」というキーワードを抽出します。
+2. 説明文や文脈から、この質問は CSV ファイル（episode_info.csv）に関するものであると判断。
+3. そのため、ルーターエージェントは **CSV Agent** を呼び出し、CSV データの集計や解析を行い、結果を取得します。
+4. 最終的な回答をユーザーに返します。
+
+### 例 2: Python コードの実行が必要な質問
+
+**ユーザー入力:**  
+「Generate and save in current working directory 15 QR codes that point to `www.udemy.com/course/langchain`」
+
+**処理の流れ:**
+
+1. ルーターエージェントは入力内容を解析し、「QR コードの生成」と「保存」が求められていることを認識。
+2. このタスクは Python コードで実装できるため、ルーターエージェントは **Python Agent** を選択。
+3. Python Agent は適切なライブラリ（例：`qrcode`ライブラリなど）を利用して QR コードを生成し、ファイルとして保存するコードを実行します。
+4. 実行結果（たとえば「15 個の QR コードが保存されました」というメッセージ）を返します。
+
+---
+
+## 5. まとめ
+
+- **ルーターエージェントの役割:**  
+  複数の専門エージェント（Executor）を管理し、ユーザーの問い合わせに応じてどのエージェントを呼び出すかを決定する。
+
+- **実装のポイント:**
+  1. 各エージェント Executor を作成し、個別のタスク（Python 実行、CSV 解析など）に特化させる。
+  2. それらを Tool オブジェクトとしてラップし、名前や説明で識別可能にする。
+  3. ルーターエージェント（grand_agent）を作成し、ツールリストを与えることで、LLM が最適なツールを選び実行できるようにする。
+
+この仕組みにより、LLM は単一の「万能エージェント」ではなく、必要な処理に応じて最適なエージェントを選択して呼び出す柔軟なシステムを実現できるのです。
+
+</details>
+
+### まとめ
