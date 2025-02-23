@@ -1,5 +1,5 @@
 # Custom
-qrcode_*.png
+qr_code_*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
