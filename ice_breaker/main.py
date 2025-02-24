@@ -36,7 +36,7 @@ def create_chain() -> RunnableSerializable[dict, str]:
         },
     )
 
-    llm = ChatOpenAI(temperature=1, model_name="gpt-4o-2024-05-13")
+    llm = ChatOpenAI(temperature=0.25, model_name="gpt-4o-2024-05-13")
 
     # chain = summary_prompt_template | llm | StrOutputParser()
     chain = summary_prompt_template | llm | summary_parser
