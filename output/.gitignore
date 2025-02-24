@@ -1,0 +1,4 @@
+.env
+my-notion-note/*
+assets/*
+Pipfile.lock
