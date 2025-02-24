@@ -14,6 +14,9 @@ def create_rag_chain(retriever: VectorStoreRetriever) -> Runnable:
 
     combine_docs_chain = create_stuff_documents_chain(llm, retrieval_qa_chain_prompt)
 
+    # リトリーブする数を8に固定
+    # retriever.search_kwargs["k"] = 8
+
     return create_retrieval_chain(
         retriever=retriever, combine_docs_chain=combine_docs_chain
     )
